@@ -38,31 +38,32 @@
 #define T_WRITE 33
 
 // Identifier
-#define T_ID
+#define T_ID 34
 
 // Constants
-#define T_ICONST
-#define T_RCONST
-#define T_BCONST
-#define T_CCONST
+#define T_ICONST 35
+#define T_RCONST 36
+#define T_BCONST 37
+#define T_CCONST 38
 
 // Operators
-#define T_RELOP
-#define T_ADDOP
-#define T_OROP
-#define T_MULDIVANDOP
-#define T_NOTOP
-#define T_INOP
+#define T_RELOP 39
+#define T_ADDOP 40
+#define T_OROP 41
+#define T_MULDIVANDOP 42
+#define T_NOTOP 43
+#define T_INOP 44
 
 // Other Lexical Tokens
-#define T_LPAREN
-#define T_RPAREN
-#define T_SEMI
-#define T_DOT
-#define T_COMMA
-#define T_EQU
-#define T_COLON
-#define T_LBRACK
-#define T_RBRACK
-#define T_ASSIGN
-#define T_DOTDOT
+#define T_LPAREN 45
+#define T_RPAREN 46
+#define T_SEMI 47
+#define T_DOT 48
+#define T_COMMA 49
+#define T_EQU 50
+#define T_COLON 51
+#define T_LBRACK 52
+#define T_RBRACK 53
+#define T_ASSIGN 54
+#define T_DOTDOT 55
+
