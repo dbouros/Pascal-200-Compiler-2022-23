@@ -1,69 +1,75 @@
 // Tokens
 
-#define T_EOF 0 
-
 // Keywords
-#define T_PROGRAM 1
-#define T_CONST 2
-#define T_TYPE 3
-#define T_ARRAY 4
-#define T_LIST 5
-#define T_SET 6
-#define T_OF 7
-#define T_RECORD 8
-#define T_VAR 9
-#define T_FUNCTION 10
-#define T_PROCEDURE 11
-#define T_INTEGER 12
-#define T_REAL 13
-#define T_BOOLEAN 14
-#define T_CHAR 15
-#define T_FORWARD 16
-#define T_LENGTH 17
-#define T_NEW 18
-#define T_BEGIN 19
-#define T_END 20
-#define T_IF 21
-#define T_THEN 22
-#define T_ELSE 23
-#define T_WHILE 24
-#define T_DO 25
-#define T_CASE 26
-#define T_OTHERWISE 27
-#define T_FOR 28
-#define T_TO 29
-#define T_DOWNTO 30
-#define T_WITH 31
-#define T_READ 32
-#define T_WRITE 33
+#define PROGRAM_T 1
+#define CONST_T 2
+#define TYPE_T 3
+#define ARRAY_T 4
+#define LIST_T 5
+#define SET_T 6
+#define OF_T 7
+#define RECORD_T 8
+#define VAR_T 9
+#define FUNCTION_T 10
+#define PROCEDURE_T 11
+#define INTEGER_T 12
+#define REAL_T 13
+#define BOOLEAN_T 14
+#define CHAR_T 15
+#define FORWARD_T 16
+#define LENGTH_T 17
+#define NEW_T 18
+#define BEGIN_T 19
+#define END_T 20
+#define IF_T 21
+#define THEN_T 22
+#define ELSE_T 23
+#define WHILE_T 24
+#define DO_T 25
+#define CASE_T 26
+#define OTHERWISE_T 27
+#define FOR_T 28
+#define TO_T 29
+#define DOWNTO_T 30
+#define WITH_T 31
+#define READ_T 32
+#define WRITE_T 33
 
 // Identifier
-#define T_ID 34
+#define ID_T 34
 
 // Constants
-#define T_ICONST 35
-#define T_RCONST 36
-#define T_BCONST 37
-#define T_CCONST 38
+#define ICONST_T 35
+#define RCONST_T 36
+#define BCONST_T 37
+#define CCONST_T 38
 
 // Operators
-#define T_RELOP 39
-#define T_ADDOP 40
-#define T_OROP 41
-#define T_MULDIVANDOP 42
-#define T_NOTOP 43
-#define T_INOP 44
+#define RELOP_T 39
+#define ADDOP_T 40
+#define OROP_T 41
+#define MULDIVANDOP_T 42
+#define NOTOP_T 43
+#define INOP_T 44
+
+// List
+#define LISTFUNC_T 45
+
+// String
+#define STRING_T 46
 
 // Other Lexical Tokens
-#define T_LPAREN 45
-#define T_RPAREN 46
-#define T_SEMI 47
-#define T_DOT 48
-#define T_COMMA 49
-#define T_EQU 50
-#define T_COLON 51
-#define T_LBRACK 52
-#define T_RBRACK 53
-#define T_ASSIGN 54
-#define T_DOTDOT 55
+#define LPAREN_T 47
+#define RPAREN_T 48
+#define SEMI_T 49
+#define DOT_T 50
+#define COMMA_T 51
+#define EQU_T 52
+#define COLON_T 53
+#define LBRACK_T 54
+#define RBRACK_T 55
+#define ASSIGN_T 56
+#define DOTDOT_T 57
 
+// End of file
+#define EOF_T 0 

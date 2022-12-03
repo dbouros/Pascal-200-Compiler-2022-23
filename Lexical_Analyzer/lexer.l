@@ -8,6 +8,8 @@
     #include <math.h>
     #include <string.h>
 
+    void token_Print(int token_val);
+
 %}
 
 %option case-insensitive 
@@ -22,6 +24,7 @@
 %%
 
 /* FUNCTIONS */
+// Main
 int main(int argc, char* argv[]){
 
     if (argc > 1){                          // Check for arguments
@@ -45,4 +48,8 @@ int main(int argc, char* argv[]){
     yyterminate();                          // End lexycal analysis
         
     return 0;
+}
+
+void token_Print(int token_val){
+        printf("Token found: %s, Token value: %d, Program line: %d", yytext, token_val, yylineno);
 }
