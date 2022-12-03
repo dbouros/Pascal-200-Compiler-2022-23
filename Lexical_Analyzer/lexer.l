@@ -84,8 +84,8 @@
 "ASSIGN"
 "DOTDOT"
 
-<<EOF>>                             {return 0;}
-"."                                 {printf("Unknown token found1");}
+<<EOF>>                             {return EOF_T;}
+.                                   {printf("Unknown token found");}
 %%
 
 /* FUNCTIONS */
