@@ -20,7 +20,72 @@
 
 /* RULES */
 %%
+"PROGRAM"                           {token_Print(PROGRAM_T); return PROGRAM_T;}
+"CONST"                             {token_Print(CONST_T); return CONST_T;}
+"TYPE"                              {token_Print(TYPE_T); return TYPE_T;}
+"ARRAY"
+"LIST"
+"SET"
+"OF"
+"RECORD"
+"VAR"
+"FUNCTION"
+"PROCEDURE"
+"INTEGER"
+"REAL"
+"BOOLEAN"
+"CHAR"
+"FORWARD"
+"LENGTH"
+"NEW"
+"BEGIN"
+"END"
+"IF"
+"THEN"
+"ELSE"
+"WHILE"
+"DO"
+"CASE"
+"OTHERWISE"
+"FOR"
+"TO"
+"DOWNTO"
+"WITH"
+"READ"
+"WRITE"
 
+"ID"
+
+"ICONST"
+"RCONST"
+"BCONST"
+"CCONST"
+
+"RELOP"
+"ADDOP"
+"OROP"
+"MULDIVANDOP"
+"NOTOP"
+"INOP"
+
+"LISTFUNC"
+
+"STRING"
+
+"LPAREN"
+"RPAREN"
+"SEMI"
+"DOT"
+"COMMA"
+"EQU"
+"COLON"
+"LBRACK"
+"RBRACK"
+"ASSIGN"
+"DOTDOT"
+
+<<EOF>>                             {return 0;}
+"."                                 {printf("Unknown token found1");}
 %%
 
 /* FUNCTIONS */
