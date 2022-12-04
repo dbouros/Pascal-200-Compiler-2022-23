@@ -8,6 +8,7 @@
     #include <string.h>
     #include "lexer.h"
 
+    // TODO: Fix yylineno to properly return the codeline !
     void token_Print(int token_val);
 
 %}
@@ -84,23 +85,23 @@
 "ASSIGN"
 "DOTDOT"
 
-<<EOF>>                             { return EOF_T; }
 .                                   {printf("Unknown token found\n");}
+<<EOF>>                             { return EOF_T; }
 %%
 
 /* FUNCTIONS */
 // Main
 int main(int argc, char* argv[]){
-
-    if (argc > 1){                          // Check for arguments
+    
+    if (argc > 1){                         // Check for arguments
         yyin = fopen(argv[1], "r");         // Open argument file 
 
         if (yyin == NULL){                   // Error check for argument
-            perror("Can't open file!");
+            printf("Can't open file!\n");
+            return -1;
         }
-        return -1;
     }
-
+    
     int token;
 
     do{
