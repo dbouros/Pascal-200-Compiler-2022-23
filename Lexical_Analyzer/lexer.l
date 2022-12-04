@@ -20,6 +20,7 @@
 /* Counts the lines of the code. */
 
 /* RULES */
+/* Tokens named: LISTFUNC, STRING, ID, CONSTS(4) may need to be changed*/
 %%
 "PROGRAM"                                           {token_Print(PROGRAM_T); return PROGRAM_T;}
 "CONST"                                             {token_Print(CONST_T); return CONST_T;}
@@ -69,7 +70,6 @@
 "NOT"                                               {token_Print(NOTOP_T); return NOTOP_T;}
 "IN"                                                {token_Print(INOP_T); return INOP_T;}
 
-/*Token LISTFUNC, STRING may need to change !!*/
 "LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
 "STRING"                                            {token_Print(STRING_T); return STRING_T;}
