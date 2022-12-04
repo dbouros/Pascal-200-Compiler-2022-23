@@ -97,7 +97,7 @@ int main(int argc, char* argv[]){
         yyin = fopen(argv[1], "r");         // Open argument file 
 
         if (yyin == NULL){                   // Error check for argument
-            printf("Can't open file!\n");
+            perror("Can't open file!\n");
             return -1;
         }
     }
