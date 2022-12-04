@@ -86,17 +86,17 @@
 "DOTDOT"
 
 .                                   {printf("Unknown token found\n");}
-<<EOF>>                             { return EOF_T; }
+<<EOF>>                             { printf("(EOF)->Reached! File Closed!\n"); return EOF_T; }
 %%
 
 /* FUNCTIONS */
 // Main
 int main(int argc, char* argv[]){
     
-    if (argc > 1){                         // Check for arguments
+    if (argc > 1){                          // Check for arguments
         yyin = fopen(argv[1], "r");         // Open argument file 
 
-        if (yyin == NULL){                   // Error check for argument
+        if (yyin == NULL){                  // Error check for argument
             perror("Can't open file!\n");
             return -1;
         }
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 
     do{
 
-        token = yylex();                   // Go through the file
+        token = yylex();                    // Go through the file
 
     }while(token != 0);                     // Until we reach EOF
 
