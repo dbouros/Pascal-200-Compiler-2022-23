@@ -84,8 +84,8 @@
 "ASSIGN"
 "DOTDOT"
 
-<<EOF>>                             {return EOF_T;}
-.                                   {printf("Unknown token found");}
+<<EOF>>                             { return EOF_T; }
+.                                   {printf("Unknown token found\n");}
 %%
 
 /* FUNCTIONS */
@@ -107,7 +107,7 @@ int main(int argc, char* argv[]){
 
         token == yylex();                   // Go through the file
 
-    }while(token != 0)                      // Until we reach EOF
+    }while(token != 0);                     // Until we reach EOF
 
     fclose(yyin);                           // Close argument file
     yyterminate();                          // End lexycal analysis
@@ -116,5 +116,5 @@ int main(int argc, char* argv[]){
 }
 
 void token_Print(int token_val){
-        printf("Token found: %s, Token value: %d, Program line: %d", yytext, token_val, yylineno);
+        printf("Token found: %s, Token value: %d, Program line: %d\n", yytext, token_val, yylineno);
 }
