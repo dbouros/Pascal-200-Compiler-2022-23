@@ -1,3 +1,7 @@
+/* TODO: 1) Fix yylineno to properly return the codeline ! */
+/*       2) Define simple regex with words (Position before rules) ! */
+/*       3) After Keywords (PROGRAM-WRITE) --> Regex */
+
 /* DEFINES */
 %{
     /* includes */
@@ -8,7 +12,6 @@
     #include <string.h>
     #include "lexer.h"
 
-    // TODO: Fix yylineno to properly return the codeline !
     void token_Print(int token_val);
 
 %}
@@ -18,6 +21,8 @@
 %option case-insensitive 
 %option yylineno
 /* Counts the lines of the code. */
+
+/* More Helpful Defines ! */
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, CONSTS(4) may need to be changed*/
