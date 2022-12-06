@@ -25,7 +25,7 @@
 /* More Helpful Defines ! */
 
 /* RULES */
-/* Tokens named: LISTFUNC, STRING, ID, CONSTS(4) may need to be changed*/
+/* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
 %%
 "PROGRAM"                                           {token_Print(PROGRAM_T); return PROGRAM_T;}
 "CONST"                                             {token_Print(CONST_T); return CONST_T;}
@@ -65,7 +65,7 @@
 
 "ICONST"                                            {token_Print(ICONST_T); return ICONST_T;}
 "RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
-"TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
+"BCONST"                                            {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
 
 ">" | ">=" | "<" | "<=" | "<>"                      {token_Print(RELOP_T); return RELOP_T;}
@@ -123,5 +123,5 @@ int main(int argc, char* argv[]){
 }
 
 void token_Print(int token_val){
-    printf("Token found: %s, Token value: %d, Program line: %d\n", yytext, token_val, yylineno);
+    printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
 }
