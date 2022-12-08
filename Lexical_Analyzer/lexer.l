@@ -1,6 +1,11 @@
-/* TODO: 1) Fix yylineno to properly return the codeline ! */
-/*       2) Define simple regex with words (Position before rules) ! */
+/* TODO List: */
+/*       1) Fix yylineno to properly return the codeline. */
+/*       2) Define simple regex with words (Position before rules). */
 /*       3) After Keywords (PROGRAM-WRITE) --> Regex */
+/*       4) Create function for string(char *str) to (int) conversion for requested number types. */
+/*       5) After step 4, update token_Print() to return arithmetical token of any type in base "10". */
+/*       6) If steps 4,5 are correct, create function(s) to convert same string to (real) type. */
+/*       7) */
 
 /* DEFINES */
 %{
@@ -16,13 +21,14 @@
 
 %}
 
-%option noyywrap   
 /* Allows only one file as input. */
+%option noyywrap  
+/* Ignores the diference between uppercase and lowercase letters. */
 %option case-insensitive 
-%option yylineno
 /* Counts the lines of the code. */
+%option yylineno
 
-/* More Helpful Defines ! */
+/* More Helpful Defines (Step 2)! */
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
