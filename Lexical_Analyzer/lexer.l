@@ -2,8 +2,8 @@
 /*       1) Fix yylineno to properly return the codeline. */
 /*       2) Define simple regex with words (Position before rules). */
 /*       3) After Keywords (PROGRAM-WRITE) --> Regex */
-/*       4) Create function for string(char *str) to (int) conversion for requested number types. */
-/*       5) After step 4, update token_Print() to return arithmetical token of any type in base "10". */
+/*       4) Create function for string(char *str) -> (int) conversion for requested number bases. */
+/*       5) After step 4, update token_Print() to return num token of any base(2, 8, 10) to base "10". */
 /*       6) If steps 4,5 are correct, create function(s) to convert same string to (real) type. */
 /*       7) Create SubLexer within Rules(with RegEx) to catch strings and comments. */
 
