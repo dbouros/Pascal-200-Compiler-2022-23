@@ -37,7 +37,6 @@ ID          _?{LETTER}[{ALPHANUM}_]*[ALPHANUM]
 DEC         [1-9]{DIGIT}* | 0
 BIN         0[Bb][1][01]*
 HEX         0[Xx][A-F1-9][A-F0-9]*
-ICONST      {DEC} | {BIN} | {HEX}
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
@@ -78,7 +77,7 @@ ICONST      {DEC} | {BIN} | {HEX}
 
 {ID}                                                {token_Print(ID_T); return ID_T;}
 
-{ICONST}                                            {token_Print(ICONST_T); return ICONST_T;}
+"ICONST"                                            {token_Print(ICONST_T); return ICONST_T;}
 "RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
 "TRUE" || "FALSE"                                   {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
