@@ -1,11 +1,11 @@
 /* TODO List: */
 /*       1) Fix yylineno to properly return the codeline. */
 /*       2) Define simple regex with words (Position before rules). */
-/*       3) After Keywords (PROGRAM-WRITE) --> Regex */
-/*       4) Create function for string(char *str) -> (int) conversion for requested number bases. */
-/*       5) After step 4, update token_Print() to return num token of any base(2, 8, 10) to base "10". */
+/*       3) After Keywords (PROGRAM-WRITE) --> Regex ()*/
+/*       4) Create function for str_to_int(char *str) -> (int) conversion for requested number base(2, 10, 16). */
+/*       5) After step 4, update token_Print() to return num token of any base(2, 10, 16) to base "10". */
 /*       6) If steps 4,5 are correct, create function(s) to convert same string to (real) type. */
-/*       7) Create SubLexer within Rules(with RegEx) to catch strings and comments. */
+/*       7) Create SubLexer within Rules(with RegEx) to catch Strings and Comments. */
 
 /* DEFINES */
 %{
@@ -28,7 +28,16 @@
 /* Counts the lines of the code. */
 %option yylineno
 
-/* More Helpful Defines (Step 2)! */
+/* More Helpful Defines. */
+LETTER      [a-zA-Z]
+DIGIT       [0-9]
+ALPHANUM    {LETTER} | {DIGIT}
+/* _?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9] */
+ID          _?{LETTER}[{ALPHANUM}_]*[ALPHANUM]
+DEC         [1-9]{DIGIT}* | 0
+BIN         0[Bb][1][01]*
+HEX         0[Xx][A-F1-9][A-F0-9]*
+ICONST      {DEC} | {BIN} | {HEX}
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
@@ -67,11 +76,11 @@
 "READ"                                              {token_Print(READ_T); return READ_T;}
 "WRITE"                                             {token_Print(WRITE_T); return WRITE_T;}
 
-"ID"                                                {token_Print(ID_T); return ID_T;}
+{ID}                                                {token_Print(ID_T); return ID_T;}
 
-"ICONST"                                            {token_Print(ICONST_T); return ICONST_T;}
+{ICONST}                                            {token_Print(ICONST_T); return ICONST_T;}
 "RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
-"BCONST"                                            {token_Print(BCONST_T); return BCONST_T;}
+"TRUE" || "FALSE"                                   {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
 
 ">" | ">=" | "<" | "<=" | "<>"                      {token_Print(RELOP_T); return RELOP_T;}
