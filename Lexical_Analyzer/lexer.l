@@ -33,7 +33,7 @@ LETTER      [a-zA-Z]
 DIGIT       [0-9]
 ALPHANUM    {LETTER} | {DIGIT}
 /* _?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9] */
-ID          _?{LETTER}[{ALPHANUM}_]*[ALPHANUM]
+ID          _?{LETTER}({ALPHANUM}|_)*{ALPHANUM}
 DEC         [1-9]{DIGIT}* | 0
 BIN         0[Bb][1][01]*
 HEX         0[Xx][A-F1-9][A-F0-9]*
