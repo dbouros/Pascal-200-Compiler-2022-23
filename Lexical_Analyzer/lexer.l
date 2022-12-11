@@ -36,7 +36,7 @@ ALPHANUM_       [a-zA-Z0-9_]
 
 /*ID            (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
 ID              (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
-DEC             [1-9]{DIGIT}* | 0
+DEC             [1-9][0-9]* | 0
 BIN             0[Bb][1][01]*
 HEX             0[Xx][A-F1-9][A-F0-9]*
 
@@ -90,9 +90,12 @@ NEWLINEWINDOWS  [\r\n]
 
 "LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
-"ICONST"                                            {token_Print(ICONST_T); return ICONST_T;}
+[1-9][0-9]* | 0                                     {token_Print(ICONST_T); return ICONST_T;}
+0[Bb][1][01]*                                       {token_Print(ICONST_T); return ICONST_T;}
+0[Xx][A-F1-9][A-F0-9]*                              {token_Print(ICONST_T); return ICONST_T;}
+
 "RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
-"TRUE" | "FALSE"                                   {token_Print(BCONST_T); return BCONST_T;}
+"TRUE" | "FALSE"                                    {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
 
 "STRING"                                            {token_Print(STRING_T); return STRING_T;}
