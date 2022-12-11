@@ -37,9 +37,6 @@ ALPHANUM_       [a-zA-Z0-9_]
 
 /*ID            (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
 ID              (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
-DEC             [1-9][0-9]* | 0
-BIN             0[Bb][1][01]*
-HEX             0[Xx][A-F1-9][A-F0-9]*
 
 WHITESPACE      [ \t]
 NEWLINELINUX    [\n]
@@ -95,7 +92,10 @@ NEWLINEWINDOWS  [\r\n]
 0[Bb][1][01]*                                       {token_Print(ICONST_T); return ICONST_T;}
 0[Xx][A-F1-9][A-F0-9]*                              {token_Print(ICONST_T); return ICONST_T;}
 
-"RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
+(0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0)            {token_Print(RCONST_T); return RCONST_T;}
+                                                    {token_Print(RCONST_T); return RCONST_T;}
+                                                    {token_Print(RCONST_T); return RCONST_T;}
+
 "TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
 
@@ -169,15 +169,15 @@ void token_Print(int token_val){
     
 }
 
-int str_int(char *str){
+int str_int(char *strptr){
 
-    if(strncmp(str, "0B", 2) == 0){
-        return (int)strtol(&str[2], NULL, 2);
+    if(strncmp(strptr, "0B", 2) == 0){
+        return (int)strtol(&strptr[2], NULL, 2);
 
-    }else if(strncmp(str, "0X", 2) == 0){
-        return (int)strtol(&str[2], NULL, 16);
-        
+    }else if(strncmp(strptr, "0X", 2) == 0){
+        return (int)strtol(&strptr[2], NULL, 16);
+
     }else{
-        return (int)strtol(&str[0], NULL, 10);
+        return (int)strtol(&strptr[0], NULL, 10);
     }
 }
