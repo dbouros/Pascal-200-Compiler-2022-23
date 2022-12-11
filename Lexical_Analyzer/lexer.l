@@ -29,14 +29,20 @@
 %option yylineno
 
 /* More Helpful Defines. */
-LETTER      [a-zA-Z]
-DIGIT       [0-9]
-ALPHANUM    {LETTER} | {DIGIT}
-/* _?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9] */
-ID          _?{LETTER}({ALPHANUM}|_)*{ALPHANUM}
-DEC         [1-9]{DIGIT}* | 0
-BIN         0[Bb][1][01]*
-HEX         0[Xx][A-F1-9][A-F0-9]*
+LETTER          [a-zA-Z]
+DIGIT           [0-9]
+ALPHANUM        [a-zA-Z0-9]
+ALPHANUM_       [a-zA-Z0-9_]
+
+/*ID            (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
+ID              (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
+DEC             [1-9]{DIGIT}* | 0
+BIN             0[Bb][1][01]*
+HEX             0[Xx][A-F1-9][A-F0-9]*
+
+WHITESPACE      [ \t]
+NEWLINELINUX    [\n]
+NEWLINEWINDOWS  [\r\n]
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
@@ -75,13 +81,6 @@ HEX         0[Xx][A-F1-9][A-F0-9]*
 "READ"                                              {token_Print(READ_T); return READ_T;}
 "WRITE"                                             {token_Print(WRITE_T); return WRITE_T;}
 
-{ID}                                                {token_Print(ID_T); return ID_T;}
-
-"ICONST"                                            {token_Print(ICONST_T); return ICONST_T;}
-"RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
-"TRUE" || "FALSE"                                   {token_Print(BCONST_T); return BCONST_T;}
-"CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
-
 ">" | ">=" | "<" | "<=" | "<>"                      {token_Print(RELOP_T); return RELOP_T;}
 "+" | "-"                                           {token_Print(ADDOP_T); return ADDOP_T;}
 "OR"                                                {token_Print(OROP_T); return OROP_T;}
@@ -91,7 +90,14 @@ HEX         0[Xx][A-F1-9][A-F0-9]*
 
 "LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
+"ICONST"                                            {token_Print(ICONST_T); return ICONST_T;}
+"RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
+"TRUE" | "FALSE"                                   {token_Print(BCONST_T); return BCONST_T;}
+"CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
+
 "STRING"                                            {token_Print(STRING_T); return STRING_T;}
+
+{ID}                                                {token_Print(ID_T); return ID_T;}
 
 "("                                                 {token_Print(LPAREN_T); return LPAREN_T;}
 ")"                                                 {token_Print(RPAREN_T); return RPAREN_T;}
@@ -104,6 +110,10 @@ HEX         0[Xx][A-F1-9][A-F0-9]*
 "]"                                                 {token_Print(RBRACK_T); return RBRACK_T;}
 ":="                                                {token_Print(ASSIGN_T); return ASSIGN_T;}
 ".."                                                {token_Print(DOTDOT_T); return DOTDOT_T;}
+
+{WHITESPACE}                                        { }
+{NEWLINELINUX}                                      { }
+{NEWLINEWINDOWS}                                    { }
 
 .                                                   {printf("Unknown token found\n");}
 <<EOF>>                                             { printf("(EOF)->Reached! File Closed!\n"); return EOF_T; }
