@@ -1,8 +1,8 @@
 /* TODO List: */
 /*       1) Fix yylineno to properly return the codeline. */
 /*       2) Define simple regex with words (Position before rules). */
-/*       3) After Keywords (PROGRAM-WRITE) --> Regex ()*/
-/*       4) Create function for str_to_int(char *str) -> (int) conversion for requested number base(2, 10, 16). */
+/*       3) After Keywords (PROGRAM-WRITE) --> Regex () */
+/*       4) Create function for str_int(char *str) -> (int) conversion for requested number base(2, 10, 16). */
 /*       5) After step 4, update token_Print() to return num token of any base(2, 10, 16) to base "10". */
 /*       6) If steps 4,5 are correct, create function(s) to convert same string to (real) type. */
 /*       7) Create SubLexer within Rules(with RegEx) to catch Strings and Comments. */
@@ -18,6 +18,7 @@
     #include "lexer.h"
 
     void token_Print(int token_val);
+    int str_int(char *str);
 
 %}
 
@@ -81,21 +82,21 @@ NEWLINEWINDOWS  [\r\n]
 "READ"                                              {token_Print(READ_T); return READ_T;}
 "WRITE"                                             {token_Print(WRITE_T); return WRITE_T;}
 
-">" | ">=" | "<" | "<=" | "<>"                      {token_Print(RELOP_T); return RELOP_T;}
-"+" | "-"                                           {token_Print(ADDOP_T); return ADDOP_T;}
+">"|">="|"<"|"<="|"<>"                              {token_Print(RELOP_T); return RELOP_T;}
+"+"|"-"                                             {token_Print(ADDOP_T); return ADDOP_T;}
 "OR"                                                {token_Print(OROP_T); return OROP_T;}
-"*" | "/" | "DIV" | "MOD" | "AND"                   {token_Print(MULDIVANDOP_T); return MULDIVANDOP_T;}
+"*"|"/"|"DIV"|"MOD"|"AND"                           {token_Print(MULDIVANDOP_T); return MULDIVANDOP_T;}
 "NOT"                                               {token_Print(NOTOP_T); return NOTOP_T;}
 "IN"                                                {token_Print(INOP_T); return INOP_T;}
 
 "LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
-[1-9][0-9]* | 0                                     {token_Print(ICONST_T); return ICONST_T;}
+[1-9][0-9]*|0                                       {token_Print(ICONST_T); return ICONST_T;}
 0[Bb][1][01]*                                       {token_Print(ICONST_T); return ICONST_T;}
 0[Xx][A-F1-9][A-F0-9]*                              {token_Print(ICONST_T); return ICONST_T;}
 
 "RCONST"                                            {token_Print(RCONST_T); return RCONST_T;}
-"TRUE" | "FALSE"                                    {token_Print(BCONST_T); return BCONST_T;}
+"TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
 
 "STRING"                                            {token_Print(STRING_T); return STRING_T;}
@@ -150,5 +151,33 @@ int main(int argc, char* argv[]){
 }
 
 void token_Print(int token_val){
-    printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
+
+    if(token_val == ICONST_T){
+        if(strncmp(yytext, "0B", 2) == 0){
+            printf("Number(Binary) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+        }else if(strncmp(yytext, "0X", 2) == 0){
+            printf("Number(Hexadecimal) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+        }else{
+            printf("Number(Decimal) found: %d --> Token value: %d --> Program line: %d\n", str_int(yytext), token_val, yylineno);
+        }
+    }else{
+        printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
+    }
+/*    if(token_val == ID_T){
+        printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
+    }*/
+    
+}
+
+int str_int(char *str){
+
+    if(strncmp(str, "0B", 2) == 0){
+        return (int)strtol(&str[2], NULL, 2);
+
+    }else if(strncmp(str, "0X", 2) == 0){
+        return (int)strtol(&str[2], NULL, 16);
+        
+    }else{
+        return (int)strtol(&str[0], NULL, 10);
+    }
 }
