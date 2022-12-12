@@ -34,11 +34,12 @@ LETTER              [a-zA-Z]
 ALPHANUM            [a-zA-Z0-9]
 ALPHANUM_           [a-zA-Z0-9_]
 
-/*ID            (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
+/*ID                (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
 ID                  (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
 
-/*REAL                (0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0) */
-REALWITHEXPONENT    ((0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0))(E[+-]?(0|[1-9][0-9]*))*
+/*REAL              (0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0) */
+REAL_WITH_EXPONENT  ((0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0))(E[+-]?(0|[1-9][0-9]*))?
+INT_WITH_EXPONENT   (0)|([1-9][0-9]*)(E[+-]?(0|[1-9][0-9]*))
 
 WHITESPACE          [ \t]
 NEWLINELINUX        [\n]
@@ -94,7 +95,8 @@ NEWLINEWINDOWS      [\r\n]
 0[Bb][1][01]*                                       {token_Print(ICONST_T); return ICONST_T;}
 0[Xx][A-F1-9][A-F0-9]*                              {token_Print(ICONST_T); return ICONST_T;}
 
-{REALWITHEXPONENT}                                  {token_Print(RCONST_T); return RCONST_T;}
+{REAL_WITH_EXPONENT}                                {token_Print(RCONST_T); return RCONST_T;}
+{INT_WITH_EXPONENT}                                 {token_Print(RCONST_T); return RCONST_T;}
 
 "TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
