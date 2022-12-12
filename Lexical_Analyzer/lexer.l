@@ -30,17 +30,19 @@
 %option yylineno
 
 /* More Helpful Defines. */
-LETTER          [a-zA-Z]
-DIGIT           [0-9]
-ALPHANUM        [a-zA-Z0-9]
-ALPHANUM_       [a-zA-Z0-9_]
+LETTER              [a-zA-Z]
+ALPHANUM            [a-zA-Z0-9]
+ALPHANUM_           [a-zA-Z0-9_]
 
 /*ID            (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
-ID              (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
+ID                  (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
 
-WHITESPACE      [ \t]
-NEWLINELINUX    [\n]
-NEWLINEWINDOWS  [\r\n]
+/*REAL                (0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0) */
+REALWITHEXPONENT    ((0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0))(E[+-]?(0|[1-9][0-9]*))*
+
+WHITESPACE          [ \t]
+NEWLINELINUX        [\n]
+NEWLINEWINDOWS      [\r\n]
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
@@ -92,9 +94,7 @@ NEWLINEWINDOWS  [\r\n]
 0[Bb][1][01]*                                       {token_Print(ICONST_T); return ICONST_T;}
 0[Xx][A-F1-9][A-F0-9]*                              {token_Print(ICONST_T); return ICONST_T;}
 
-(0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0)            {token_Print(RCONST_T); return RCONST_T;}
-                                                    {token_Print(RCONST_T); return RCONST_T;}
-                                                    {token_Print(RCONST_T); return RCONST_T;}
+{REALWITHEXPONENT}                                  {token_Print(RCONST_T); return RCONST_T;}
 
 "TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
@@ -166,7 +166,7 @@ void token_Print(int token_val){
 /*    if(token_val == ID_T){
         printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
     }*/
-    
+
 }
 
 int str_int(char *strptr){
