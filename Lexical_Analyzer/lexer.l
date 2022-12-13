@@ -55,7 +55,6 @@ NEW_LINE_LINUX      [\n]
 NEW_LINE_WINDOWS    [\r\n]
 
 /* RULES */
-/* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
 %%
 "PROGRAM"                                           {token_Print(PROGRAM_T); return PROGRAM_T;}
 "CONST"                                             {token_Print(CONST_T); return CONST_T;}
@@ -140,10 +139,10 @@ NEW_LINE_WINDOWS    [\r\n]
 // Main
 int main(int argc, char* argv[]){
     
-    if (argc > 1){                          // Check for arguments
-        yyin = fopen(argv[1], "r");         // Open argument file 
+    if (argc > 1){
+        yyin = fopen(argv[1], "r");
 
-        if (yyin == NULL){                  // Error check for argument
+        if (yyin == NULL){
             perror("Can't open file!\n");
             return -1;
         }
@@ -153,12 +152,12 @@ int main(int argc, char* argv[]){
 
     do{
 
-        token = yylex();                    // Go through the file
+        token = yylex();
 
-    }while(token != 0);                     // Until we reach EOF
+    }while(token != 0);
 
-    fclose(yyin);                           // Close argument file
-    yyterminate();                          // End lexycal analysis
+    fclose(yyin);
+    yyterminate();
         
     return 0;
 }
@@ -194,14 +193,14 @@ void token_Print(int token_val){
 /* Integer Constants */
 int str_int(char *strptr){
 
-    if(strncmp(strptr, "0B", 2) == 0){              /* Check if token is Binary */
+    if(strncmp(strptr, "0B", 2) == 0){
         return (int)strtol(&strptr[2], NULL, 2);
 
-    }else if(strncmp(strptr, "0X", 2) == 0){        /* Check if token is Hexadecimal */
+    }else if(strncmp(strptr, "0X", 2) == 0){
         return (int)strtol(&strptr[2], NULL, 16);
 
-    }else{                                          /* Else Decimal */
-        return (int)strtol(&strptr[0], NULL, 10);   /* Could also use atoi(). */
+    }else{
+        return atoi(strptr);
     }
 }
 
@@ -211,7 +210,7 @@ float str_float(char *strptr){
     float f_num;
     char *dot;
 
-    f_num = (float)strtod(&strptr[0], NULL);    /* String to double with typecasting to float */
+    f_num = (float)strtod(&strptr[0], NULL);
     return f_num;
     
 }
