@@ -45,8 +45,8 @@ HEX_INT             0[X][A-F1-9][A-F0-9]*
 
 /* Real Constants(RCONST) */
 /*REAL              (0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0) */
-REAL_WITH_EXPONENT  (0|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0))(E[+-]?(0|[1-9][0-9]*))?
-INT_WITH_EXPONENT   (0|([1-9][0-9]*))(E[+-]?(0|[1-9][0-9]*))
+REAL_WITH_EXPONENT  (0|[1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0)(E[+-]?(0|[1-9][0-9]*))?
+INT_WITH_EXPONENT   (0|[1-9][0-9]*)(E[+-]?(0|[1-9][0-9]*))
 BIN_REAL            0[B][1][01]*\.[1][01]*
 HEX_REAL            0[X]([A-F1-9][A-F0-9]*)*(\.)([A-F0-9]+)
 
@@ -163,17 +163,25 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
+/* Printing all tokens */
 void token_Print(int token_val){
 
+    /* Printing arithmetic integer constants */
     if(token_val == ICONST_T){
         if(strncmp(yytext, "0B", 2) == 0){
+            /* Printing binary integer constants */
             printf("Number(Binary) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+
         }else if(strncmp(yytext, "0X", 2) == 0){
+            /* Printing hexadecimal integer constants */
             printf("Number(Hexadecimal) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+
         }else{
+            /* Printing decimal integer constants */
             printf("Number(Decimal) found: %d --> Token value: %d --> Program line: %d\n", str_int(yytext), token_val, yylineno);
         }
     }else{
+        /* Printing the rest of the tokens */
         printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
     }
 /*    if(token_val == ID_T){
@@ -182,15 +190,28 @@ void token_Print(int token_val){
 
 }
 
+/* Returning values of all arithmetic constants */
+/* Integer Constants */
 int str_int(char *strptr){
 
-    if(strncmp(strptr, "0B", 2) == 0){
+    if(strncmp(strptr, "0B", 2) == 0){              /* Check if token is Binary */
         return (int)strtol(&strptr[2], NULL, 2);
 
-    }else if(strncmp(strptr, "0X", 2) == 0){
+    }else if(strncmp(strptr, "0X", 2) == 0){        /* Check if token is Hexadecimal */
         return (int)strtol(&strptr[2], NULL, 16);
 
-    }else{
-        return (int)strtol(&strptr[0], NULL, 10);
+    }else{                                          /* Else Decimal */
+        return (int)strtol(&strptr[0], NULL, 10);   /* Could also use atoi(). */
     }
+}
+
+/* Real Constants */
+float str_float(char *strptr){
+
+    float f_num;
+    char *dot;
+
+    f_num = (float)strtod(&strptr[0], NULL);    /* String to double with typecasting to float */
+    return f_num;
+    
 }
