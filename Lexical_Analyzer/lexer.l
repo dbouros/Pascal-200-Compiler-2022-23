@@ -40,14 +40,15 @@ ID                  (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
 
 /* Integer Constants(ICONST) */
 INTEGER_CONSTANT    [1-9][0-9]*|0
-BIN_INT             0[Bb][1][01]*
-HEX_INT             0[Xx][A-F1-9][A-F0-9]*
+BIN_INT             0[B][1][01]*
+HEX_INT             0[X][A-F1-9][A-F0-9]*
 
 /* Real Constants(RCONST) */
 /*REAL              (0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0) */
 REAL_WITH_EXPONENT  (0|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0))(E[+-]?(0|[1-9][0-9]*))?
 INT_WITH_EXPONENT   (0|([1-9][0-9]*))(E[+-]?(0|[1-9][0-9]*))
-
+BIN_REAL            0[B][1][01]*\.[1][01]*
+HEX_REAL            0[X]([A-F1-9][A-F0-9]*)*(\.)([A-F0-9]+)
 
 WHITESPACE          [ \t]
 NEW_LINE_LINUX      [\n]
@@ -105,6 +106,8 @@ NEW_LINE_WINDOWS    [\r\n]
 
 {REAL_WITH_EXPONENT}                                {token_Print(RCONST_T); return RCONST_T;}
 {INT_WITH_EXPONENT}                                 {token_Print(RCONST_T); return RCONST_T;}
+{BIN_REAL}                                          {token_Print(RCONST_T); return RCONST_T;}
+{HEX_REAL}                                          {token_Print(RCONST_T); return RCONST_T;}
 
 "TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
 "CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
