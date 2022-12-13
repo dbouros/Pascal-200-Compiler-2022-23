@@ -29,21 +29,29 @@
 /* Counts the lines of the code. */
 %option yylineno
 
-/* More Helpful Defines. */
+/* Helpful Defines. */
 LETTER              [a-zA-Z]
 ALPHANUM            [a-zA-Z0-9]
 ALPHANUM_           [a-zA-Z0-9_]
 
+/* Identifier(ID) */
 /*ID                (_?[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9])|[a-zA-Z] */
 ID                  (_?{LETTER}{ALPHANUM_}*{ALPHANUM})|{LETTER}
 
+/* Integer Constants(ICONST) */
+INTEGER_CONSTANT    [1-9][0-9]*|0
+BIN_INT             0[Bb][1][01]*
+HEX_INT             0[Xx][A-F1-9][A-F0-9]*
+
+/* Real Constants(RCONST) */
 /*REAL              (0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0) */
 REAL_WITH_EXPONENT  ((0)|([1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0))(E[+-]?(0|[1-9][0-9]*))?
 INT_WITH_EXPONENT   (0)|([1-9][0-9]*)(E[+-]?(0|[1-9][0-9]*))
 
+
 WHITESPACE          [ \t]
-NEWLINELINUX        [\n]
-NEWLINEWINDOWS      [\r\n]
+NEW_LINE_LINUX      [\n]
+NEW_LINE_WINDOWS    [\r\n]
 
 /* RULES */
 /* Tokens named: LISTFUNC, STRING, ID, (I,R,B,C)CONST may need to be changed*/
@@ -91,9 +99,9 @@ NEWLINEWINDOWS      [\r\n]
 
 "LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
-[1-9][0-9]*|0                                       {token_Print(ICONST_T); return ICONST_T;}
-0[Bb][1][01]*                                       {token_Print(ICONST_T); return ICONST_T;}
-0[Xx][A-F1-9][A-F0-9]*                              {token_Print(ICONST_T); return ICONST_T;}
+{INTEGER_CONSTANT}                                  {token_Print(ICONST_T); return ICONST_T;}
+{BIN_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
+{HEX_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
 
 {REAL_WITH_EXPONENT}                                {token_Print(RCONST_T); return RCONST_T;}
 {INT_WITH_EXPONENT}                                 {token_Print(RCONST_T); return RCONST_T;}
@@ -118,8 +126,8 @@ NEWLINEWINDOWS      [\r\n]
 ".."                                                {token_Print(DOTDOT_T); return DOTDOT_T;}
 
 {WHITESPACE}                                        { }
-{NEWLINELINUX}                                      { }
-{NEWLINEWINDOWS}                                    { }
+{NEW_LINE_LINUX}                                    { }
+{NEW_LINE_WINDOWS}                                  { }
 
 .                                                   {printf("Unknown token found\n");}
 <<EOF>>                                             { printf("(EOF)->Reached! File Closed!\n"); return EOF_T; }
