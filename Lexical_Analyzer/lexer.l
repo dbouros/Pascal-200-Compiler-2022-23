@@ -19,6 +19,7 @@
 
     void token_Print(int token_val);
     int str_int(char *str);
+    float str_float(char *strptr);
 
 %}
 
@@ -169,16 +170,28 @@ void token_Print(int token_val){
     if(token_val == ICONST_T){
         if(strncmp(yytext, "0B", 2) == 0){
             /* Printing binary integer constants */
-            printf("Number(Binary) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+            printf("Integer number(Binary) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
 
         }else if(strncmp(yytext, "0X", 2) == 0){
             /* Printing hexadecimal integer constants */
-            printf("Number(Hexadecimal) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+            printf("Integer number(Hexadecimal) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
 
         }else{
             /* Printing decimal integer constants */
-            printf("Number(Decimal) found: %d --> Token value: %d --> Program line: %d\n", str_int(yytext), token_val, yylineno);
+            printf("Integer number(Decimal) found: %d --> Token value: %d --> Program line: %d\n", str_int(yytext), token_val, yylineno);
         }
+    }else if(token_val == RCONST_T){
+        if(strncmp(yytext, "0B", 2) == 0){
+            /* Printing binary real constants */
+            printf("Real number(Binary) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
+        }else if(strncmp(yytext, "0X", 2) == 0){
+            /* Printing hexadecimal real constants */
+            printf("Real number(Hexadecimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
+        }else{
+            /* Printing decimal real constants */
+            printf("Real number(Decimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
+        }
+
     }else{
         /* Printing the rest of the tokens */
         printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
@@ -208,9 +221,25 @@ int str_int(char *strptr){
 float str_float(char *strptr){
 
     float f_num;
-    char *dot;
+    if(strncmp(strptr, "0B", 2) == 0){
+        /*0B101.10100 = 1010.10100*/
+                    /*  0123456789  */
+        
 
-    f_num = (float)strtod(&strptr[0], NULL);
-    return f_num;
-    
+        return f_num;
+
+    }else if(strncmp(strptr, "0X", 2) == 0){
+        
+        return f_num;
+
+    }else{
+        /*f_num = (float)strtod(&strptr[0], NULL);*/
+        if(){
+
+        }else{
+
+        }
+        return f_num;
+
+    }
 }
