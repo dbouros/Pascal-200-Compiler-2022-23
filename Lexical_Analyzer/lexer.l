@@ -18,7 +18,7 @@
     #include "lexer.h"
 
     void token_Print(int token_val);
-    int str_int(char *str);
+    int str_int(char *strptr);
     float str_float(char *strptr);
 
 %}
@@ -223,41 +223,51 @@ float str_float(char *strptr){
     float f_num;
     if(strncmp(strptr, "0B", 2) == 0){
 
-        char *after_dot = strchr(strptr, ".");
+        char *after_dot = strchr(strptr, '.');
         f_num = (int)strtol(&strptr[2], &after_dot, 2);
         int i;
-        for(i=1; i<strlen(after_dot)-1; i++){
+        for(i=1; i<=strlen(after_dot)-1; i++){
             f_num += (after_dot[i] - '0') * (1/pow(2,i));
         }
 
     }else if(strncmp(strptr, "0X", 2) == 0){
 
-        char *after_dot = strchr(strptr, ".");
+        char *after_dot = strchr(strptr, '.');
         f_num = (int)strtol(&strptr[2], &after_dot, 16);
         int i;
-        for(i=1; i<strlen(after_dot)-1; i++){
+        for(i=1; i<=strlen(after_dot)-1; i++){
             if(after_dot[i] <= '9'){
                 f_num += (after_dot[i] - '0') * (1/pow(16,i));
             }else{
-                f_num += (after_dot[i] + 10 - '0') * (1/pow(16,i));
+                f_num += (after_dot[i] + 10 - 'A') * (1/pow(16,i));
             }
         }
 
     }else{
-        
-        if(strncmp(strptr, "E", 1) == 0){
-                char *after_E = strchr(strptr, "E");
+        printf("Hello World!");
+        /*if(strncmp(strptr, "E", 1) == 0){
+                char *after_E = strchr(strptr, 'E');
                 f_num = (int)strtol(&strptr[0], &after_E, 10);
                 if(after_E[1] == '-'){
-                    double after_E = strtod(&after_dot[2], NULL);
-                    f_num = pow((double)f_num, after_E);
+                
+                    double after_E_num;
+                    int i;
+                    for(i=2; i<=strlen(after_E)-1; i++){
+                        after_E_num = strtod(&after_E[i], NULL);
+                    }
+                    f_num = 1/pow((double)f_num, after_E_num);
                 }else{
-                    double after_E = strtod(&after_dot[1], NULL);
-                    f_num = pow((double)f_num, after_E);
+
+                    double after_E_num;
+                    int i;
+                    for(i=1; i<=strlen(after_E)-1; i++){
+                        after_E_num = strtod(&after_E[i], NULL);
+                    }
+                    f_num = pow((double)f_num, after_E_num);
             }
         }else{
             f_num = atof(strptr);
-        }
+        }*/
         
     }
 
