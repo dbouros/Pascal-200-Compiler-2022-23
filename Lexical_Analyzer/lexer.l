@@ -244,19 +244,33 @@ float str_float(char *strptr){
         }
 
     }else{
-        printf("Non Binary, Non Hexadecimal\t");
-        int i, exponent, size_strptr = (int)strlen(strptr)-1;
-        for(i=0;i<=size_strptr; i++){
-            if(strptr[i] == 'E')
-                exponent = 1;
-        }
-        if(exponent == 1){
 
+        int i, expo_check;
+        for(i=0;i<=strlen(strptr)-1; i++){
+            if(strptr[i] == 'E')
+                expo_check = 1;
+        }
+        
+        if(expo_check == 1){
+
+            f_num = atoi(strptr);
             char *after_E = strchr(strptr, 'E');
+            double expo_num;
             if(after_E[1] == '-'){
-                printf("Found Negative Number");
+
+                int i;
+                for(i=2; i<=strlen(after_E)-1; i++){
+                    expo_num += after_E[i] - '0';
+                }
+                f_num = 1/pow(f_num, expo_num);
+                
             }else{
-                printf("Found Positive Number");
+
+                int i;
+                for(i=1; i<=strlen(after_E)-1; i++){
+                    expo_num += after_E[i] - '0';
+                }
+                f_num = pow(f_num, expo_num);
             }
         }else{
             f_num = atof(strptr);
