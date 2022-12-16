@@ -1,5 +1,5 @@
 /* TODO List: */
-/*       1) Fix yylineno to properly return the codeline. */
+/*       1) Fix -lm flag bug when able and try to change ICONST and RCONST RegEx position. */
 /*       2) Define simple regex with words (Position before rules). */
 /*       3) After Keywords (PROGRAM-WRITE) --> Regex () */
 /*       4) Create function for str_int(char *str) -> (int) conversion for requested number base(2, 10, 16). */
@@ -244,31 +244,23 @@ float str_float(char *strptr){
         }
 
     }else{
-        printf("Hello World!");
-        /*if(strncmp(strptr, "E", 1) == 0){
-                char *after_E = strchr(strptr, 'E');
-                f_num = (int)strtol(&strptr[0], &after_E, 10);
-                if(after_E[1] == '-'){
-                
-                    double after_E_num;
-                    int i;
-                    for(i=2; i<=strlen(after_E)-1; i++){
-                        after_E_num = strtod(&after_E[i], NULL);
-                    }
-                    f_num = 1/pow((double)f_num, after_E_num);
-                }else{
+        printf("Non Binary, Non Hexadecimal\t");
+        int i, exponent, size_strptr = (int)strlen(strptr)-1;
+        for(i=0;i<=size_strptr; i++){
+            if(strptr[i] == 'E')
+                exponent = 1;
+        }
+        if(exponent == 1){
 
-                    double after_E_num;
-                    int i;
-                    for(i=1; i<=strlen(after_E)-1; i++){
-                        after_E_num = strtod(&after_E[i], NULL);
-                    }
-                    f_num = pow((double)f_num, after_E_num);
+            char *after_E = strchr(strptr, 'E');
+            if(after_E[1] == '-'){
+                printf("Found Negative Number");
+            }else{
+                printf("Found Positive Number");
             }
         }else{
             f_num = atof(strptr);
-        }*/
-        
+        }
     }
 
     return f_num;
