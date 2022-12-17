@@ -54,6 +54,8 @@ HEX_REAL            0[X]([A-F1-9][A-F0-9]*)*(\.)([A-F0-9]+)
 ASCII               [ !"#$%&'()*+,-./:;<=>?@\[\\\]^_`{|}~]
 SPECIAL_CHARS       {\\[nftrbv]}
 
+LIST_FUNC           C(AD*|D+)R
+
 WHITESPACE          [ \t]
 NEW_LINE_LINUX      [\n]
 NEW_LINE_WINDOWS    [\r\n]
@@ -115,9 +117,9 @@ NEW_LINE_WINDOWS    [\r\n]
 \'{ASCII}\'|\'{ALPHANUM}\'                          {token_Print(CCONST_T); return CCONST_T;}
 \'{SPECIAL_CHARS}\'                                 {token_Print(CCONST_T); return CCONST_T;}
 
-"LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
+{LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
-"STRING"                                            {token_Print(STRING_T); return STRING_T;}
+\"                                                  {BEGIN(STRING);}
 
 {ID}                                                {token_Print(ID_T); return ID_T;}
 
