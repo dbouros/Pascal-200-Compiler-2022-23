@@ -9,7 +9,7 @@
 
 /* DEFINES */
 %{
-    /* includes */
+/* Includes */
     #include <stdio.h>
     #include <stdlib.h>
     #include <unistd.h>
@@ -50,6 +50,9 @@ REAL_WITH_EXPONENT  (0|[1-9][0-9]*)?(\.)(0*[1-9]+[0-9]*|0)(E[+-]?(0|[1-9][0-9]*)
 INT_WITH_EXPONENT   (0|[1-9][0-9]*)(E[+-]?(0|[1-9][0-9]*))
 BIN_REAL            0[B][1][01]*\.[1][01]*
 HEX_REAL            0[X]([A-F1-9][A-F0-9]*)*(\.)([A-F0-9]+)
+
+ASCII               [ !"#$%&'()*+,-./:;<=>?@\[\\\]^_`{|}~]
+SPECIAL_CHARS       {\\[nftrbv]}
 
 WHITESPACE          [ \t]
 NEW_LINE_LINUX      [\n]
@@ -98,8 +101,6 @@ NEW_LINE_WINDOWS    [\r\n]
 "NOT"                                               {token_Print(NOTOP_T); return NOTOP_T;}
 "IN"                                                {token_Print(INOP_T); return INOP_T;}
 
-"LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
-
 {INTEGER_CONSTANT}                                  {token_Print(ICONST_T); return ICONST_T;}
 {BIN_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
 {HEX_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
@@ -110,7 +111,11 @@ NEW_LINE_WINDOWS    [\r\n]
 {HEX_REAL}                                          {token_Print(RCONST_T); return RCONST_T;}
 
 "TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
-"CCONST"                                            {token_Print(CCONST_T); return CCONST_T;}
+
+\'{ASCII}\'|\'{ALPHANUM}\'                          {token_Print(CCONST_T); return CCONST_T;}
+\'{SPECIAL_CHARS}\'                                 {token_Print(CCONST_T); return CCONST_T;}
+
+"LISTFUNC"                                          {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
 "STRING"                                            {token_Print(STRING_T); return STRING_T;}
 
@@ -202,7 +207,7 @@ void token_Print(int token_val){
 
 }
 
-/* Returning values of all arithmetic constants */
+/* Returning values of all arithmetic (Integer, Real) constants. */
 /* Integer Constants */
 int str_int(char *strptr){
 
@@ -216,6 +221,7 @@ int str_int(char *strptr){
         return atoi(strptr);
     }
 }
+
 
 /* Real Constants */
 float str_float(char *strptr){
