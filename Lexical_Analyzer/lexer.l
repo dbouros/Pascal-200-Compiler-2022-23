@@ -52,7 +52,7 @@ BIN_REAL            0[B][1][01]*\.[1][01]*
 HEX_REAL            0[X]([A-F1-9][A-F0-9]*)*(\.)([A-F0-9]+)
 
 ASCII               [ !"#$%&'()*+,-./:;<=>?@\[\\\]^_`{|}~]
-SPECIAL_CHARS       {\\[nftrbv]}
+SPECIAL_CHARS       (\\[nftrbv])
 
 LIST_FUNC           C(AD*|D+)R
 
@@ -103,6 +103,7 @@ NEW_LINE_WINDOWS    [\r\n]
 "NOT"                                               {token_Print(NOTOP_T); return NOTOP_T;}
 "IN"                                                {token_Print(INOP_T); return INOP_T;}
 
+
 {INTEGER_CONSTANT}                                  {token_Print(ICONST_T); return ICONST_T;}
 {BIN_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
 {HEX_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
@@ -118,8 +119,6 @@ NEW_LINE_WINDOWS    [\r\n]
 \'{SPECIAL_CHARS}\'                                 {token_Print(CCONST_T); return CCONST_T;}
 
 {LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
-
-\"                                                  {BEGIN(STRING);}
 
 {ID}                                                {token_Print(ID_T); return ID_T;}
 
