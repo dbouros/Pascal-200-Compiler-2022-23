@@ -256,12 +256,19 @@ float str_float(char *strptr){
         for(i=0;i<=strlen(strptr)-1; i++){
             if(strptr[i] == 'E')
                 expo_check = 1;
+            if(strptr[i] == 'e')
+                expo_check = 2;
         }
         
-        if(expo_check == 1){
+        if(expo_check == 1 || expo_check == 2){
 
             f_num = atoi(strptr);
-            char *after_E = strchr(strptr, 'E');
+            char *after_E;
+            if(expo_check == 1){
+                after_E = strchr(strptr, 'E');
+            }else{
+                after_E = strchr(strptr, 'e');
+            }
             double expo_num;
             if(after_E[1] == '-'){
 
