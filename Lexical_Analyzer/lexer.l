@@ -262,14 +262,22 @@ float str_float(char *strptr){
         
         if(expo_check == 1 || expo_check == 2){
 
-            f_num = atoi(strptr);
             char *after_E;
             if(expo_check == 1){
                 after_E = strchr(strptr, 'E');
             }else{
                 after_E = strchr(strptr, 'e');
             }
+
+            f_num = (float)strtol(strptr, &after_E, 10); This Works(Kinda)!
+            /*char *before_E;
+            for(i=0; i<=strlen(strptr)-1-strlen(after_E); i++){
+                before_E[i] = strptr[i];
+            }
+            f_num = atof(before_E);*/
+
             double expo_num;
+
             if(after_E[1] == '-'){
 
                 int i;
