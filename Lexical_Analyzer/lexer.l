@@ -269,7 +269,7 @@ float str_float(char *strptr){
                 after_E = strchr(strptr, 'e');
             }
 
-            f_num = (float)strtol(strptr, &after_E, 10); This Works(Kinda)!
+            f_num = (float)strtol(strptr, &after_E, 10); //This Works(Kinda)!
             /*char *before_E;
             for(i=0; i<=strlen(strptr)-1-strlen(after_E); i++){
                 before_E[i] = strptr[i];
