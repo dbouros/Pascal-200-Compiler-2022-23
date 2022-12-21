@@ -1,0 +1,18 @@
+"h\i"
+
+"Vasdsa\" "
+
+"Hello My name is \
+bill and this \
+is my multi-line text"
+
+------
+
+"hello my name is 
+bill ans this"
+
+"hello my name is
+
+if(x == 5){
+
+}"
