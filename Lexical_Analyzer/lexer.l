@@ -20,6 +20,7 @@
     void token_Print(int token_val);
     int str_int(char *strptr);
     float str_float(char *strptr);
+    //char str_buff[1024];
 
 %}
 
@@ -29,6 +30,7 @@
 %option case-insensitive 
 /* Counts the lines of the code. */
 %option yylineno
+%x SBLXR_STRING
 
 /* Helpful Defines. */
 LETTER              [a-zA-Z]
@@ -119,6 +121,14 @@ NEW_LINE_WINDOWS    [\r\n]
 \'{SPECIAL_CHARS}\'                                 {token_Print(CCONST_T); return CCONST_T;}
 
 {LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
+
+\"                                                  {BEGIN(SBLXR_STRING);}
+<SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("%d\n", STRING_T); return STRING_T;}
+<SBLXR_STRING>(\\\n|\\\r\n)                         { /*True New line*/}
+<SBLXR_STRING>(\\.|[^"\\])                          {printf("Found char in string: %s\t", yytext);/*SP char or normal char*/}
+<SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");/*Fake new line, invalid input*/}
+<SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing");/*Reached EOF without closing*/}
+<SBLXR_STRING>.                                     {printf("Unknown char for sting");/*Unknown char for sting*/}
 
 {ID}                                                {token_Print(ID_T); return ID_T;}
 
