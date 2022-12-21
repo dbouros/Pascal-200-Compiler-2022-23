@@ -20,7 +20,8 @@
     void token_Print(int token_val);
     int str_int(char *strptr);
     float str_float(char *strptr);
-    //char str_buff[1024];
+
+    char str_buff[2048];
 
 %}
 
@@ -122,13 +123,33 @@ NEW_LINE_WINDOWS    [\r\n]
 
 {LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
-\"                                                  {BEGIN(SBLXR_STRING);}
-<SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("%d\n", STRING_T); return STRING_T;}
+\"                                                  {strcpy(str_buff, ""); BEGIN(SBLXR_STRING);}
+<SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_buff, STRING_T, yylineno); return STRING_T;}
 <SBLXR_STRING>(\\\n|\\\r\n)                         { /*True New line*/}
-<SBLXR_STRING>(\\.|[^"\\])                          {printf("Found char in string: %s\t", yytext);/*SP char or normal char*/}
-<SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");/*Fake new line, invalid input*/}
-<SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing");/*Reached EOF without closing*/}
-<SBLXR_STRING>.                                     {printf("Unknown char for sting");/*Unknown char for sting*/}
+<SBLXR_STRING>(\\.|[^"\\])                          {/*strcat(str_buff, yytext);*/
+                                                    if(strlen(yytext) == 2){
+                                                        if(strcmp(yytext, "\\n") == 0){
+                                                            strcat(str_buff, "\n");
+                                                        }else if(strcmp(yytext, "\\f") == 0){
+                                                            strcat(str_buff, "\f");
+                                                        }else if(strcmp(yytext, "\\t") == 0){
+                                                            strcat(str_buff, "\t");
+                                                        }else if(strcmp(yytext, "\\r") == 0){
+                                                            strcat(str_buff, "\r");
+                                                        }else if(strcmp(yytext, "\\b") == 0){
+                                                            strcat(str_buff, "\b");
+                                                        }else if(strcmp(yytext, "\\v") == 0){
+                                                            strcat(str_buff, "\v");
+                                                        }else{
+                                                            strcat(str_buff, &yytext[1]);
+                                                        }
+                                                    }else{
+                                                        strcat(str_buff, yytext);
+                                                    }
+                                                    }
+<SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");}
+<SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing");}
+<SBLXR_STRING>.                                     {printf("Unknown char for sting");}
 
 {ID}                                                {token_Print(ID_T); return ID_T;}
 
@@ -179,6 +200,7 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
+/* Helpful Functions */
 /* Printing all tokens */
 void token_Print(int token_val){
 
