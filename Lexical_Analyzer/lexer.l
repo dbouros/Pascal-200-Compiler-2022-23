@@ -138,8 +138,8 @@ NEW_LINE_WINDOWS    [\r\n]
 {NEW_LINE_LINUX}                                    { }
 {NEW_LINE_WINDOWS}                                  { }
 
-.                                                   {printf("Unknown token found\n");}
 <<EOF>>                                             { printf("(EOF)->Reached! File Closed!\n"); return EOF_T; }
+.                                                   {printf("Unknown token found\n");}
 %%
 
 /* FUNCTIONS */
