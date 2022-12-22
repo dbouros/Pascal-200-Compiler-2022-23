@@ -24,6 +24,8 @@
     char str_Arr[2048];
     void sp_chr_Handler(char *str_Arr);
 
+    void error_Handler(int token_val, int id);
+
 %}
 
 /* Allows only one file as input. */
@@ -130,18 +132,18 @@ NEW_LINE_WINDOWS    [\r\n]
 
 \"                                                  {strcpy(str_Arr, ""); BEGIN(SBLXR_STRING);}
 <SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_Arr, STRING_T, yylineno); return STRING_T;}
-<SBLXR_STRING>(\\\n|\\\r\n)                         { /*True New line*/}
+<SBLXR_STRING>(\\\n|\\\r\n)                         { /*New line*/}
 <SBLXR_STRING>(\\.|[^"\\])                          {sp_chr_Handler(str_Arr);}
 <SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");}
-<SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing string");}
-<SBLXR_STRING>.                                     {printf("Unknown char for sting");}
+<SBLXR_STRING><<EOF>>                               {error_Handler(STRING_T, 0);/*printf("Reached EOF without closing string");*/}
+<SBLXR_STRING>.                                     {error_Handler(STRING_T, -1);/*printf("Unknown char for sting");*/}
 
 \{                                                  {BEGIN(SBLXR_COMMENT);}
-<SBLXR_COMMENT>\}                                   {BEGIN(INITIAL); printf("Comment found --> Program line %d\n", yylineno);}
-<SBLXR_COMMENT>(\\\n|\\\r\n)                        { /*True New line*/}
+<SBLXR_COMMENT>\}                                   {BEGIN(INITIAL); printf("Comment found --> Token value: %d --> Program line %d\n", COMMENT_T, yylineno);}
+<SBLXR_COMMENT>(\\\n|\\\r\n)                        { /*New line*/}
 <SBLXR_COMMENT>[^}\\]                               {}
-<SBLXR_COMMENT><<EOF>>                              {printf("Reached EOF without closing comment");}
-<SBLXR_COMMENT>.                                    {printf("Unknown char for comment");}
+<SBLXR_COMMENT><<EOF>>                              {error_Handler(COMMENT_T, 0);/*printf("Reached EOF without closing comment");*/}
+<SBLXR_COMMENT>.                                    {error_Handler(COMMENT_T, -1);/*printf("Unknown char for comment");*/}
 
 "("                                                 {token_Print(LPAREN_T); return LPAREN_T;}
 ")"                                                 {token_Print(RPAREN_T); return RPAREN_T;}
@@ -159,8 +161,8 @@ NEW_LINE_WINDOWS    [\r\n]
 {NEW_LINE_LINUX}                                    { }
 {NEW_LINE_WINDOWS}                                  { }
 
-<<EOF>>                                             { printf("(EOF)->Reached! File Closed!\n"); return EOF_T; }
-.                                                   {printf("Unknown token found\n");}
+<<EOF>>                                             { token_Print(EOF_T); return EOF_T; }
+.                                                   {error_Handler(ERROR_T, -1); /*printf("Unknown token found\n");*/}
 %%
 
 /* FUNCTIONS */
@@ -219,15 +221,13 @@ void token_Print(int token_val){
             /* Printing decimal real constants */
             printf("Real number(Decimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
         }
-
+    }else if(token_val == EOF_T){
+        printf("EOF Reached --> Token value: %d --> Program line: %d\n", token_val, yylineno);
+        printf("File Closed\n");
     }else{
         /* Printing the rest of the tokens */
         printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
     }
-/*    if(token_val == ID_T){
-        printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
-    }*/
-
 }
 
 /* Returning values of all arithmetic (Integer, Real) constants. */
@@ -320,7 +320,6 @@ float str_float(char *strptr){
             f_num = atof(strptr);
         }
     }
-
     return f_num;
 }
 
@@ -344,5 +343,29 @@ void sp_chr_Handler(char *str_Arr){
         }
     }else{
         strcat(str_Arr, yytext);
+    }
+}
+
+void error_Handler(int token_val, int id){
+
+    if(token_val == STRING_T){
+        if(id == 0){
+            printf("EOF Reached, expected \" to close strings --> Program line: %d\n",yylineno);
+            exit(-1);
+        }else{
+            printf("Unknown token found inside string --> Program line: %d\n", yylineno);
+            yyless(1);
+        }
+    }else if(token_val == COMMENT_T){
+        if(id == 0){
+            printf("EOF Reached, expected } to close comments --> Program line: %d\n",yylineno);
+            exit(-1);
+        }else{
+            printf("Unknown token found inside comment --> Program line: %d\n", yylineno);
+            yyless(1);
+        }
+    }else{
+        printf("Unknown token found --> Program line: %d\n", yylineno);
+        yyless(1);
     }
 }

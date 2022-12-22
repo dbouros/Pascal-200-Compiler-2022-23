@@ -71,5 +71,11 @@
 #define ASSIGN_T 56
 #define DOTDOT_T 57
 
+// Comment
+#define COMMENT_T 58
+
+// DOT ERROR
+#define ERROR_T 59
+
 // End of file
 #define EOF_T 0 
