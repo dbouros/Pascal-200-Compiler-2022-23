@@ -32,7 +32,9 @@
 %option case-insensitive 
 /* Counts the lines of the code. */
 %option yylineno
+/* Sub lexers */
 %x SBLXR_STRING
+%x SBLXR_COMMENT
 
 /* Helpful Defines. */
 LETTER              [a-zA-Z]
@@ -124,36 +126,22 @@ NEW_LINE_WINDOWS    [\r\n]
 
 {LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
+{ID}                                                {token_Print(ID_T); return ID_T;}
+
 \"                                                  {strcpy(str_Arr, ""); BEGIN(SBLXR_STRING);}
 <SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_Arr, STRING_T, yylineno); return STRING_T;}
 <SBLXR_STRING>(\\\n|\\\r\n)                         { /*True New line*/}
-<SBLXR_STRING>(\\.|[^"\\])                          {/*strcat(str_Arr, yytext);*/
-                                                    sp_chr_Handler(str_Arr);
-                                                    /*if(strlen(yytext) == 2){
-                                                        if(strcmp(yytext, "\\n") == 0){
-                                                            strcat(str_Arr, "\n");
-                                                        }else if(strcmp(yytext, "\\f") == 0){
-                                                            strcat(str_Arr, "\f");
-                                                        }else if(strcmp(yytext, "\\t") == 0){
-                                                            strcat(str_Arr, "\t");
-                                                        }else if(strcmp(yytext, "\\r") == 0){
-                                                            strcat(str_Arr, "\r");
-                                                        }else if(strcmp(yytext, "\\b") == 0){
-                                                            strcat(str_Arr, "\b");
-                                                        }else if(strcmp(yytext, "\\v") == 0){
-                                                            strcat(str_Arr, "\v");
-                                                        }else{
-                                                            strcat(str_Arr, &yytext[1]);
-                                                        }
-                                                    }else{
-                                                        strcat(str_Arr, yytext);
-                                                    }*/
-                                                    }
+<SBLXR_STRING>(\\.|[^"\\])                          {sp_chr_Handler(str_Arr);}
 <SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");}
-<SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing");}
+<SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing string");}
 <SBLXR_STRING>.                                     {printf("Unknown char for sting");}
 
-{ID}                                                {token_Print(ID_T); return ID_T;}
+\{                                                  {BEGIN(SBLXR_COMMENT);}
+<SBLXR_COMMENT>\}                                   {BEGIN(INITIAL); printf("Comment found --> Program line %d\n", yylineno);}
+<SBLXR_COMMENT>(\\\n|\\\r\n)                        { /*True New line*/}
+<SBLXR_COMMENT>[^}\\]                               {}
+<SBLXR_COMMENT><<EOF>>                              {printf("Reached EOF without closing comment");}
+<SBLXR_COMMENT>.                                    {printf("Unknown char for comment");}
 
 "("                                                 {token_Print(LPAREN_T); return LPAREN_T;}
 ")"                                                 {token_Print(RPAREN_T); return RPAREN_T;}
@@ -337,6 +325,7 @@ float str_float(char *strptr){
 }
 
 void sp_chr_Handler(char *str_Arr){
+
     if(strlen(yytext) == 2){
         if(strcmp(yytext, "\\n") == 0){
             strcat(str_Arr, "\n");
