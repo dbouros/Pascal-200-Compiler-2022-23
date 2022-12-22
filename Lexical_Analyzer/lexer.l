@@ -21,7 +21,8 @@
     int str_int(char *strptr);
     float str_float(char *strptr);
 
-    char str_buff[2048];
+    char str_Arr[2048];
+    void sp_chr_Handler(char *str_Arr);
 
 %}
 
@@ -123,29 +124,30 @@ NEW_LINE_WINDOWS    [\r\n]
 
 {LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
-\"                                                  {strcpy(str_buff, ""); BEGIN(SBLXR_STRING);}
-<SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_buff, STRING_T, yylineno); return STRING_T;}
+\"                                                  {strcpy(str_Arr, ""); BEGIN(SBLXR_STRING);}
+<SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_Arr, STRING_T, yylineno); return STRING_T;}
 <SBLXR_STRING>(\\\n|\\\r\n)                         { /*True New line*/}
-<SBLXR_STRING>(\\.|[^"\\])                          {/*strcat(str_buff, yytext);*/
-                                                    if(strlen(yytext) == 2){
+<SBLXR_STRING>(\\.|[^"\\])                          {/*strcat(str_Arr, yytext);*/
+                                                    sp_chr_Handler(str_Arr);
+                                                    /*if(strlen(yytext) == 2){
                                                         if(strcmp(yytext, "\\n") == 0){
-                                                            strcat(str_buff, "\n");
+                                                            strcat(str_Arr, "\n");
                                                         }else if(strcmp(yytext, "\\f") == 0){
-                                                            strcat(str_buff, "\f");
+                                                            strcat(str_Arr, "\f");
                                                         }else if(strcmp(yytext, "\\t") == 0){
-                                                            strcat(str_buff, "\t");
+                                                            strcat(str_Arr, "\t");
                                                         }else if(strcmp(yytext, "\\r") == 0){
-                                                            strcat(str_buff, "\r");
+                                                            strcat(str_Arr, "\r");
                                                         }else if(strcmp(yytext, "\\b") == 0){
-                                                            strcat(str_buff, "\b");
+                                                            strcat(str_Arr, "\b");
                                                         }else if(strcmp(yytext, "\\v") == 0){
-                                                            strcat(str_buff, "\v");
+                                                            strcat(str_Arr, "\v");
                                                         }else{
-                                                            strcat(str_buff, &yytext[1]);
+                                                            strcat(str_Arr, &yytext[1]);
                                                         }
                                                     }else{
-                                                        strcat(str_buff, yytext);
-                                                    }
+                                                        strcat(str_Arr, yytext);
+                                                    }*/
                                                     }
 <SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");}
 <SBLXR_STRING><<EOF>>                               {printf("Reached EOF without closing");}
@@ -332,4 +334,26 @@ float str_float(char *strptr){
     }
 
     return f_num;
+}
+
+void sp_chr_Handler(char *str_Arr){
+    if(strlen(yytext) == 2){
+        if(strcmp(yytext, "\\n") == 0){
+            strcat(str_Arr, "\n");
+        }else if(strcmp(yytext, "\\f") == 0){
+            strcat(str_Arr, "\f");
+        }else if(strcmp(yytext, "\\t") == 0){
+            strcat(str_Arr, "\t");
+        }else if(strcmp(yytext, "\\r") == 0){
+            strcat(str_Arr, "\r");
+        }else if(strcmp(yytext, "\\b") == 0){
+            strcat(str_Arr, "\b");
+        }else if(strcmp(yytext, "\\v") == 0){
+            strcat(str_Arr, "\v");
+        }else{
+            strcat(str_Arr, &yytext[1]);
+        }
+    }else{
+        strcat(str_Arr, yytext);
+    }
 }
