@@ -221,6 +221,8 @@ void token_Print(int token_val){
             /* Printing decimal real constants */
             printf("Real number(Decimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
         }
+    }else if(token_val == CCONST_T){
+        printf("Character found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
     }else if(token_val == EOF_T){
         printf("EOF Reached --> Token value: %d --> Program line: %d\n", token_val, yylineno);
         printf("File Closed\n");

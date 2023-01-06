@@ -12,193 +12,198 @@
 
 %}
 
+%error-verbose
+
 %union{
     int int_var;
     float float_var;
-    boolean boolean_var;
+    boolean bool_var;
     char char_var;
-    char *string_var;
+    char *str_var;
 }
 
-%token      <string_var>         PROGRAM      "program"
-%token      <string_var>         CONST        "const"
-%token      <string_var>         TYPE         "type"
-%token      <string_var>         ARRAY        "array"
-%token      <string_var>         LIST         "list"
-%token      <string_var>         SET          "set"
-%token      <string_var>         OF           "of"
-%token      <string_var>         RECORD       "record"
-%token      <string_var>         VAR          "var"
-%token      <string_var>         FUNCTION     "function"
-%token      <string_var>         PROCEDURE    "procedure"
-%token      <string_var>         INTEGER      "integer"
-%token      <string_var>         REAL         "real"
-%token      <string_var>         BOOLEAN      "boolean"
-%token      <string_var>         CHAR         "char"
-%token      <string_var>         FORWARD      "forward"
-%token      <string_var>         LENGTH       "length"
-%token      <string_var>         NEW          "new"
-%token      <string_var>         BEGIN        "begin"
-%token      <string_var>         END          "end"
-%token      <string_var>         IF           "if"
-%token      <string_var>         THEN         "then"
-%token      <string_var>         ELSE         "else"
-%token      <string_var>         WHILE        "while"
-%token      <string_var>         DO           "do"
-%token      <string_var>         CASE         "case"
-%token      <string_var>         OTHERWISE    "otherwise"
-%token      <string_var>         FOR          "for"
-%token      <string_var>         TO           "to"
-%token      <string_var>         DOWNTO       "downto"
-%token      <string_var>         WITH         "with"
-%token      <string_var>         READ         "read"
-%token      <string_var>         WRITE        "write"
+%token      PROGRAM_T      "program"
+%token      CONST_T        "const"
+%token      TYPE_T         "type"
+%token      ARRAY_T        "array"
+%token      LIST_T         "list"
+%token      SET_T          "set"
+%token      OF_T           "of"
+%token      RECORD_T       "record"
+%token      VAR_T          "var"
+%token      FUNCTION_T     "function"
+%token      PROCEDURE_T    "procedure"
+%token      INTEGER_T      "integer"
+%token      REAL_T         "real"
+%token      BOOLEAN_T      "boolean"
+%token      CHAR_T         "char"
+%token      FORWARD_T      "forward"
+%token      LENGTH_T       "length"
+%token      NEW_T          "new"
+%token      BEGIN_T        "begin"
+%token      END_T          "end"
+%token      IF_T           "if"
+%token      THEN_T         "then"
+%token      ELSE_T         "else"
+%token      WHILE_T        "while"
+%token      DO_T           "do"
+%token      CASE_T         "case"
+%token      OTHERWISE_T    "otherwise"
+%token      FOR_T          "for"
+%token      TO_T           "to"
+%token      DOWNTO_T       "downto"
+%token      WITH_T         "with"
+%token      READ_T         "read"
+%token      WRITE_T        "write"
 
-%token      <string_var>         ID           "id"
+%token      <str_var>       ID_T          "id"
 
-%token      <int_var>            ICONST       "iconst"
-%token      <float_var>           RCONST       "rconst"
-%token      <boolean_var>        BCONST       "true, false"
-%token      <char_var>           CCONST       "cconst"
+%token      <int_var>       ICONST_T      "iconst"
+%token      <float_var>     RCONST_T      "rconst"
+%token      <bool_var>      BCONST_T      "true, false"
+%token      <char_var>      CCONST_T      "cconst"
 
-%token      <string_var>         RELOP        ">, >=, <, <=, <>"
-%token      <string_var>         ADDOP        "+, -"
-%token      <string_var>         OROP         "or"
-%token      <string_var>         MULDIVANDOP  "*, /, div, mod, and"
-%token      <string_var>         NOTOP        "not"
-%token      <string_var>         INOP         "in"
+%token      RELOP_T        ">, >=, <, <=, <>"
+%token      ADDOP_T        "+, -"
+%token      OROP_T         "or"
+%token      MULDIVANDOP_T  "*, /, div, mod, and"
+%token      NOTOP_T        "not"
+%token      INOP_T         "in"
 
-%token      <string_var>         LISTFUNC     "listfunc"
+%token      LISTFUNC_T     "listfunc"
 
-%token      <string_var>         STRING       "string"
+%token      STRING_T       "string"
 
-%token      <string_var>         LPAREN       "("
-%token      <string_var>         RPAREN       ")"
-%token      <string_var>         SEMI         ";"
-%token      <string_var>         DOT          "."
-%token      <string_var>         COMMA        ","
-%token      <string_var>         EQU          "="
-%token      <string_var>         COLON        ":"
-%token      <string_var>         LBRACK       "["
-%token      <string_var>         RBRACK       "]"
-%token      <string_var>         ASSIGN       ":="
-%token      <string_var>         DOTDOT       ".."
+%token      LPAREN_T       "("
+%token      RPAREN_T       ")"
+%token      SEMI_T         ";"
+%token      DOT_T          "."
+%token      COMMA_T        ","
+%token      EQU_T          "="
+%token      COLON_T        ":"
+%token      LBRACK_T       "["
+%token      RBRACK_T       "]"
+%token      ASSIGN_T       ":="
+%token      DOTDOT_T       ".."
 
-%token      <string_var>         EOF      0   "end of file"
+%token      EOF_T      0   "end of file"
 
+
+
+%start program
 
 %%
-program:                header declarations subprograms comp_statement DOT
+program:                header declarations subprograms comp_statement DOT_T
 
-header:                 PROGRAM ID SEMI
+header:                 PROGRAM_T ID_T SEMI_T
 
 declarations:           constdefs typedefs vardefs
 
-constdefs:              CONST constant_defs SEMI
+constdefs:              CONST_T constant_defs SEMI_T
                         | %empty {}
 
-constant_defs:          constant_defs SEMI ID EQU expression
-                        | ID EQU expression
+constant_defs:          constant_defs SEMI_T ID_T EQU_T expression
+                        | ID_T EQU_T expression
 
-expression:             expression RELOP expression
-                        | expression EQU expression
-                        | expression INOP expression
-                        | expression OROP expression
-                        | expression ADDOP expression
-                        | expression MULDIVANDOP expression
-                        | ADDOP expression
-                        | NOTOP expression
+expression:             expression RELOP_T expression
+                        | expression EQU_T expression
+                        | expression INOP_T expression
+                        | expression OROP_T expression
+                        | expression ADDOP_T expression
+                        | expression MULDIVANDOP_T expression
+                        | ADDOP_T expression
+                        | NOTOP_T expression
                         | variable
-                        | ID LPAREN expressions RPAREN
-                        | LENGTH LPAREN expression RPAREN
-                        | NEW LPAREN expression RPAREN
+                        | ID_T LPAREN_T expressions RPAREN_T
+                        | LENGTH_T LPAREN_T expression RPAREN_T
+                        | NEW_T LPAREN_T expression RPAREN_T
                         | constant
-                        | LPAREN expression RPAREN
+                        | LPAREN_T expression RPAREN_T
                         | setlistexpression
                         
-variable:               ID
-                        | variable DOT ID
-                        | variable LBRACK expressions RBRACK
-                        | LISTFUNC LPAREN expression RPAREN
+variable:               ID_T
+                        | variable DOT_T ID_T
+                        | variable LBRACK_T expressions RBRACK_T
+                        | LISTFUNC_T LPAREN_T expression RPAREN_T
 
-expressions:            expressions COMMA expression
+expressions:            expressions COMMA_T expression
                         | expression
 
-constant:               ICONST
-                        | RCONST
-                        | BCONST
-                        | CCONST
+constant:               ICONST_T
+                        | RCONST_T
+                        | BCONST_T
+                        | CCONST_T
 
-setlistexpression:      LBRACK expressions RBRACK
-                        | LBRACK RBRACK
+setlistexpression:      LBRACK_T expressions RBRACK_T
+                        | LBRACK_T RBRACK_T
 
-typedefs:               TYPE type_defs SEMI
+typedefs:               TYPE_T type_defs SEMI_T
                         | %empty {}
 
-type_defs:              type_defs SEMI ID EQU type_def
-                        | ID EQU type_def
+type_defs:              type_defs SEMI_T ID_T EQU_T type_def
+                        | ID_T EQU_T type_def
 
-type_def:               ARRAY LBRACK dims RBRACK OF typename
-                        | LIST OF typename
-                        | SET OF typename
-                        | RECORD fields END
-                        | limit DOTDOT limit
+type_def:               ARRAY_T LBRACK_T dims RBRACK_T OF_T typename
+                        | LIST_T OF_T typename
+                        | SET_T OF_T typename
+                        | RECORD_T fields END_T
+                        | limit DOTDOT_T limit
 
-dims:                   dims COMMA limits
+dims:                   dims COMMA_T limits
                         | limits
 
-limits:                 limit DOTDOT limit
-                        | ID
+limits:                 limit DOTDOT_T limit
+                        | ID_T
 
-limit:                  sign ICONST
-                        | CCONST
-                        | BCONST
-                        | ADDOP ID
-                        | ID
+limit:                  sign ICONST_T
+                        | CCONST_T
+                        | BCONST_T
+                        | ADDOP_T ID_T
+                        | ID_T
 
-sign:                   ADDOP | %empty {}
+sign:                   ADDOP_T | %empty {}
 
 typename:               standard_type
-                        | ID
+                        | ID_T
 
-standard_type:          INTEGER | REAL | BOOLEAN | CHAR
+standard_type:          INTEGER_T | REAL_T | BOOLEAN_T | CHAR_T
 
-fields:                 fields SEMI field
+fields:                 fields SEMI_T field
                         | field
 
-field:                  identifiers COLON typename
+field:                  identifiers COLON_T typename
 
-identifiers:            identifiers COMMA ID
-                        | ID
+identifiers:            identifiers COMMA_T ID_T
+                        | ID_T
 
-vardefs:                VAR variable_defs SEMI
+vardefs:                VAR_T variable_defs SEMI_T
                         | %empty {}
 
-variable_defs:          variable_defs SEMI identifiers COLON typename
-                        | identifiers COLON typename
+variable_defs:          variable_defs SEMI_T identifiers COLON_T typename
+                        | identifiers COLON_T typename
 
-subprograms:            subprograms subprogram SEMI
+subprograms:            subprograms subprogram SEMI_T
                         | %empty {}
 
-subprogram:             sub_header SEMI FORWARD
-                        | sub_header SEMI declarations subprograms comp_statement
+subprogram:             sub_header SEMI_T FORWARD_T
+                        | sub_header SEMI_T declarations subprograms comp_statement
 
-sub_header:             FUNCTION ID formal_parameters COLON standard_type
-                        | FUNCTION ID formal_parameters COLON LIST
-                        | PROCEDURE ID formal_parameters
-                        | FUNCTION ID
+sub_header:             FUNCTION_T ID_T formal_parameters COLON_T standard_type
+                        | FUNCTION_T ID_T formal_parameters COLON_T LIST_T
+                        | PROCEDURE_T ID_T formal_parameters
+                        | FUNCTION_T ID_T
 
-formal_parameters:      LPAREN parameter_list RPAREN
+formal_parameters:      LPAREN_T parameter_list RPAREN_T
                         | %empty {}
 
-parameter_list:         parameter_list SEMI pass identifiers COLON typename
-                        | pass identifiers COLON typename
+parameter_list:         parameter_list SEMI_T pass identifiers COLON_T typename
+                        | pass identifiers COLON_T typename
 
-pass:                   VAR | %empty {}
+pass:                   VAR_T | %empty {}
 
-comp_statement:         BEGIN statements END
+comp_statement:         BEGIN_T statements END_T
 
-statements:             statements SEMI statement
+statements:             statements SEMI_T statement
                         | statement
 
 statement:              assignment
@@ -212,56 +217,56 @@ statement:              assignment
                         | comp_statement
                         | %empty {}
 
-assignment:             variable ASSIGN expression
-                        | variable ASSIGN STRING
+assignment:             variable ASSIGN_T expression
+                        | variable ASSIGN_T STRING_T
 
-if_statement:           IF expression THEN statement if_tail
+if_statement:           IF_T expression THEN_T statement if_tail
 
-if_tail:                ELSE statement
+if_tail:                ELSE_T statement
                         | %empty {}
 
-case_statement:         CASE expression OF cases case_tail END
+case_statement:         CASE_T expression OF_T cases case_tail END_T
 
-cases:                  cases SEMI single_case
+cases:                  cases SEMI_T single_case
                         | single_case
 
-single_case:            label_list COLON statement
+single_case:            label_list COLON_T statement
                         | %empty {}
 
-label_list:             label_list COMMA label
+label_list:             label_list COMMA_T label
                         | label
 
 label:                  sign constant
-                        | sign ID
+                        | sign ID_T
 
-case_tail:              SEMI OTHERWISE COLON statement
+case_tail:              SEMI_T OTHERWISE_T COLON_T statement
                         | %empty {}
 
-while_statement:        WHILE expression DO statement
+while_statement:        WHILE_T expression DO_T statement
 
-for_statement:          FOR ID ASSIGN iter_space DO statement
+for_statement:          FOR_T ID_T ASSIGN_T iter_space DO_T statement
 
-iter_space:             expression TO expression
-                        | expression DOWNTO expression
+iter_space:             expression TO_T expression
+                        | expression DOWNTO_T expression
 
-with_statement:         WITH variable DO statement
+with_statement:         WITH_T variable DO_T statement
 
-subprogram_call:        ID
-                        | ID LPAREN expressions RPAREN
+subprogram_call:        ID_T
+                        | ID_T LPAREN_T expressions RPAREN_T
 
-io_statement:           READ LPAREN read_list RPAREN
-                        | WRITE LPAREN write_list RPAREN
+io_statement:           READ_T LPAREN_T read_list RPAREN_T
+                        | WRITE_T LPAREN_T write_list RPAREN_T
 
-read_list:              read_list COMMA read_item
+read_list:              read_list COMMA_T read_item
                         | read_item
 
 read_item:              variable
 
-write_list:             write_list COMMA write_item
+write_list:             write_list COMMA_T write_item
                         | write_item
 
 write_item:             expression
-                        | STRING
+                        | STRING_T
 %%
 
 /* FUNCTIONS */
@@ -280,6 +285,6 @@ int main(int argc, char* argv[]){
     yyparse();
 
     fclose(yyin);
-        
+    
     return 0;
 }

@@ -26,6 +26,9 @@
 
     void error_Handler(int token_val, int id);
 
+    bool str_bool(char *strptr);
+    char str_char(char *strptr);
+
 %}
 
 /* Allows only one file as input. */
@@ -112,26 +115,26 @@ NEW_LINE_WINDOWS    [\r\n]
 "IN"                                                {token_Print(INOP_T); return INOP_T;}
 
 
-{INTEGER_CONSTANT}                                  {token_Print(ICONST_T); return ICONST_T;}
-{BIN_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
-{HEX_INT}                                           {token_Print(ICONST_T); return ICONST_T;}
+{INTEGER_CONSTANT}                                  {token_Print(ICONST_T); yylval.int_var = str_int(yytext); return ICONST_T;}
+{BIN_INT}                                           {token_Print(ICONST_T); yylval.int_var = str_int(yytext); return ICONST_T;}
+{HEX_INT}                                           {token_Print(ICONST_T); yylval.int_var = str_int(yytext); return ICONST_T;}
 
-{REAL_WITH_EXPONENT}                                {token_Print(RCONST_T); return RCONST_T;}
-{INT_WITH_EXPONENT}                                 {token_Print(RCONST_T); return RCONST_T;}
-{BIN_REAL}                                          {token_Print(RCONST_T); return RCONST_T;}
-{HEX_REAL}                                          {token_Print(RCONST_T); return RCONST_T;}
+{REAL_WITH_EXPONENT}                                {token_Print(RCONST_T); yylval.float_var = str_float(yytext); return RCONST_T;}
+{INT_WITH_EXPONENT}                                 {token_Print(RCONST_T); yylval.float_var = str_float(yytext); return RCONST_T;}
+{BIN_REAL}                                          {token_Print(RCONST_T); yylval.float_var = str_float(yytext); return RCONST_T;}
+{HEX_REAL}                                          {token_Print(RCONST_T); yylval.float_var = str_float(yytext); return RCONST_T;}
 
-"TRUE"|"FALSE"                                      {token_Print(BCONST_T); return BCONST_T;}
+"TRUE"|"FALSE"                                      {token_Print(BCONST_T); yylval.bool_var = str_bool(yytext); return BCONST_T;}
 
-\'{ASCII}\'|\'{ALPHANUM}\'                          {token_Print(CCONST_T); return CCONST_T;}
-\'{SPECIAL_CHARS}\'                                 {token_Print(CCONST_T); return CCONST_T;}
+\'{ASCII}\'|\'{ALPHANUM}\'                          {token_Print(CCONST_T); yylval.char_var = str_char(yytext); return CCONST_T;}
+\'{SPECIAL_CHARS}\'                                 {token_Print(CCONST_T); yylval.char_var = str_char(yytext); return CCONST_T;}
 
 {LIST_FUNC}                                         {token_Print(LISTFUNC_T); return LISTFUNC_T;}
 
 {ID}                                                {token_Print(ID_T); return ID_T;}
 
 \"                                                  {strcpy(str_Arr, ""); BEGIN(SBLXR_STRING);}
-<SBLXR_STRING>\"                                    {BEGIN(INITIAL); printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_Arr, STRING_T, yylineno); return STRING_T;}
+<SBLXR_STRING>\"                                    {BEGIN(INITIAL); /*printf("String Found: %s --> Token value: %d --> Program line: %d\n", str_Arr, STRING_T, yylineno);*/ yylval.str_var = strdup(str_Arr); return STRING_T;}
 <SBLXR_STRING>(\\\n|\\\r\n)                         { /*New line*/}
 <SBLXR_STRING>(\\.|[^"\\])                          {sp_chr_Handler(str_Arr);}
 <SBLXR_STRING>(\n|\r\n)                             {printf("Fake new line, invalid input");}
@@ -139,7 +142,7 @@ NEW_LINE_WINDOWS    [\r\n]
 <SBLXR_STRING>.                                     {error_Handler(STRING_T, -1);/*printf("Unknown char for sting");*/}
 
 \{                                                  {BEGIN(SBLXR_COMMENT);}
-<SBLXR_COMMENT>\}                                   {BEGIN(INITIAL); printf("Comment found --> Token value: %d --> Program line %d\n", COMMENT_T, yylineno);}
+<SBLXR_COMMENT>\}                                   {BEGIN(INITIAL); /*printf("Comment found --> Token value: %d --> Program line %d\n", COMMENT_T, yylineno);*/}
 <SBLXR_COMMENT>(\\\n|\\\r\n)                        { /*New line*/}
 <SBLXR_COMMENT>[^}\\]                               {}
 <SBLXR_COMMENT><<EOF>>                              {error_Handler(COMMENT_T, 0);/*printf("Reached EOF without closing comment");*/}
@@ -195,39 +198,41 @@ int main(int argc, char* argv[]){
 /* Helpful Functions */
 /* Printing all tokens */
 void token_Print(int token_val){
-
-    /* Printing arithmetic integer constants */
-    if(token_val == ICONST_T){
-        if(strncmp(yytext, "0B", 2) == 0){
-            /* Printing binary integer constants */
-            printf("Integer number(Binary) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
-
-        }else if(strncmp(yytext, "0X", 2) == 0){
-            /* Printing hexadecimal integer constants */
-            printf("Integer number(Hexadecimal) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
-
-        }else{
-            /* Printing decimal integer constants */
-            printf("Integer number(Decimal) found: %d --> Token value: %d --> Program line: %d\n", str_int(yytext), token_val, yylineno);
-        }
-    }else if(token_val == RCONST_T){
-        if(strncmp(yytext, "0B", 2) == 0){
-            /* Printing binary real constants */
-            printf("Real number(Binary) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
-        }else if(strncmp(yytext, "0X", 2) == 0){
-            /* Printing hexadecimal real constants */
-            printf("Real number(Hexadecimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
-        }else{
-            /* Printing decimal real constants */
-            printf("Real number(Decimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
-        }
-    }else if(token_val == EOF_T){
-        printf("EOF Reached --> Token value: %d --> Program line: %d\n", token_val, yylineno);
-        printf("File Closed\n");
-    }else{
-        /* Printing the rest of the tokens */
-        printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
-    }
+//
+//    /* Printing arithmetic integer constants */
+//    if(token_val == ICONST_T){
+//        if(strncmp(yytext, "0B", 2) == 0){
+//            /* Printing binary integer constants */
+//            printf("Integer number(Binary) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+//
+//        }else if(strncmp(yytext, "0X", 2) == 0){
+//            /* Printing hexadecimal integer constants */
+//            printf("Integer number(Hexadecimal) found: %s --> Decimal value: %d --> Token value: %d --> Program line: %d\n", yytext, str_int(yytext), token_val, yylineno);
+//
+//        }else{
+//            /* Printing decimal integer constants */
+//            printf("Integer number(Decimal) found: %d --> Token value: %d --> Program line: %d\n", str_int(yytext), token_val, yylineno);
+//        }
+//    }else if(token_val == RCONST_T){
+//        if(strncmp(yytext, "0B", 2) == 0){
+//            /* Printing binary real constants */
+//            printf("Real number(Binary) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
+//        }else if(strncmp(yytext, "0X", 2) == 0){
+//            /* Printing hexadecimal real constants */
+//            printf("Real number(Hexadecimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
+//        }else{
+//            /* Printing decimal real constants */
+//            printf("Real number(Decimal) found %s --> Decimal value: %f --> Token value: %d --> Program line: %d\n", yytext, str_float(yytext), token_val, yylineno);
+//        }
+//    }else if(token_val == CCONST_T){
+//        printf("Character found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
+//    }else if(token_val == EOF_T){
+//        printf("EOF Reached --> Token value: %d --> Program line: %d\n", token_val, yylineno);
+//        printf("File Closed\n");
+//    }else{
+//        /* Printing the rest of the tokens */
+//        printf("Token found: %s --> Token value: %d --> Program line: %d\n", yytext, token_val, yylineno);
+//    }   
 }
 
 /* Returning values of all arithmetic (Integer, Real) constants. */
@@ -364,8 +369,34 @@ void error_Handler(int token_val, int id){
             printf("Unknown token found inside comment --> Program line: %d\n", yylineno);
             yyless(1);
         }
+    }else if(token_val == CCONST_T && id == -1){
+        print("Unknown character token found --> Program line: %d\n", yylineno);
+        yyless(1);
     }else{
         printf("Unknown token found --> Program line: %d\n", yylineno);
         yyless(1);
+    }
+}
+
+bool str_bool(char *strptr){
+    if(strcmp(strptr, "TRUE") == 0 || strcmp(strptr, "true") == 0){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+char str_char(char *strptr){
+    
+    char c_var;
+    if(strlen(strptr) == 3){
+        c_var = strptr[1];
+        return c_var;
+    }else if(strlen(strptr) == 3 && strcmp(&strptr[1], "\\") == 0){
+        c_var = strptr[1];
+        strcat(&c_var, &strptr[2]);'\n'
+        return c_var;
+    }else{
+        error_Handler(CCONST_T, -1);
     }
 }
