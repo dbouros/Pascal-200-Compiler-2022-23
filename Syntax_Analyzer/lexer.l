@@ -12,10 +12,12 @@
 /* Includes */
     #include <stdio.h>
     #include <stdlib.h>
+    #include <stdbool.h>
     #include <unistd.h>
     #include <math.h>
     #include <string.h>
     #include "lexer.h"
+    #include "bison.tab.h"
 
     void token_Print(int token_val);
     int str_int(char *strptr);
@@ -370,7 +372,7 @@ void error_Handler(int token_val, int id){
             yyless(1);
         }
     }else if(token_val == CCONST_T && id == -1){
-        print("Unknown character token found --> Program line: %d\n", yylineno);
+        printf("Unknown character token found --> Program line: %d\n", yylineno);
         yyless(1);
     }else{
         printf("Unknown token found --> Program line: %d\n", yylineno);
@@ -394,7 +396,7 @@ char str_char(char *strptr){
         return c_var;
     }else if(strlen(strptr) == 3 && strcmp(&strptr[1], "\\") == 0){
         c_var = strptr[1];
-        strcat(&c_var, &strptr[2]);'\n'
+        strcat(&c_var, &strptr[2]);
         return c_var;
     }else{
         error_Handler(CCONST_T, -1);

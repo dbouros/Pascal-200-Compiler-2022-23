@@ -1,6 +1,7 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include <stdbool.h>
     #include <unistd.h>
     #include <math.h>
     #include <string.h>
@@ -21,7 +22,7 @@
 %union{
     int int_var;
     float float_var;
-    boolean bool_var;
+    bool bool_var;
     char char_var;
     char *str_var;
 }
@@ -296,9 +297,4 @@ void error_Handler(int token_val, int id){
 
     err_counter++;
 
-    if(){
-
-    }else{
-
-    }
 }
