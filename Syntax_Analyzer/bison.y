@@ -14,7 +14,8 @@
     extern char str_Arr[2048];
 
     int err_counter;
-    void error_Handler(int token_val, int id);
+    void yyerror(char const *s);
+    
 %}
 
 %error-verbose
@@ -90,6 +91,9 @@
 %token      RBRACK_T       "]"
 %token      ASSIGN_T       ":="
 %token      DOTDOT_T       ".."
+
+%token      COMMENT_T      "comment"
+%token      ERROR_T        "error"
 
 %token      EOF_T      0   "end of file"
 
@@ -293,8 +297,7 @@ int main(int argc, char* argv[]){
 }
 
 /* Error Handler */
-void error_Handler(int token_val, int id){
-
+void yyerror(char const *s){
     err_counter++;
-
+    printf("Error: %s\n", s);
 }

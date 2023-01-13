@@ -171,7 +171,7 @@ NEW_LINE_WINDOWS    [\r\n]
 
 /* FUNCTIONS */
 // Main
-int main(int argc, char* argv[]){
+/*int main(int argc, char* argv[]){
     
     if (argc > 1){
         yyin = fopen(argv[1], "r");
@@ -194,7 +194,7 @@ int main(int argc, char* argv[]){
     yyterminate();
         
     return 0;
-}
+}*/
 
 /* Helpful Functions */
 /* Printing all tokens */
