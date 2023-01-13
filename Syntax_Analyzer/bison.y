@@ -5,11 +5,15 @@
     #include <math.h>
     #include <string.h>
 
-    extern FILE *yyin;
     extern int yylex();
     extern void yyterminate();
+    extern FILE *yyin;
     extern char *yytext;
 
+    extern char str_Arr[2048];
+
+    int err_counter;
+    void error_Handler(int token_val, int id);
 %}
 
 %error-verbose
@@ -87,8 +91,6 @@
 %token      DOTDOT_T       ".."
 
 %token      EOF_T      0   "end of file"
-
-
 
 %start program
 
@@ -287,4 +289,16 @@ int main(int argc, char* argv[]){
     fclose(yyin);
     
     return 0;
+}
+
+/* Error Handler */
+void error_Handler(int token_val, int id){
+
+    err_counter++;
+
+    if(){
+
+    }else{
+
+    }
 }
