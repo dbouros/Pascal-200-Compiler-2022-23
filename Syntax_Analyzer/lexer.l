@@ -16,7 +16,6 @@
     #include <unistd.h>
     #include <math.h>
     #include <string.h>
-    #include "lexer.h"
     #include "bison.tab.h"
 
     void token_Print(int token_val);
