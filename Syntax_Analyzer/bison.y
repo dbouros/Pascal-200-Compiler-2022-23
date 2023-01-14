@@ -97,6 +97,23 @@
 
 %token      EOF_T      0   "end of file"
 
+%type <str_var> program declarations constdefs constant_defs expression variable expressions constant setlistexpression
+%type <str_var> typedefs type_defs type_def dims limits limit sign typename standard_type fields field identifiers vardefs
+%type <str_var> variable_defs subprograms subprogram sub_header formal_parameters parameter_list pass comp_statement
+%type <str_var> statements statement assignment if_statement if_tail case_statement cases single_case label_list label
+%type <str_var> case_tail while_statement for_statement iter_space with_statement subprogram_call io_statement read_list
+%type <str_var> read_item write_list write_item
+
+
+%nonassoc EQU_T INOP_T RELOP_T
+%left ADDOP_T  OROP_T
+%left MULDIVANDOP_T
+%nonassoc NOTOP_T
+%left LPAREN_T RPAREN_T DOT_T LBRACK_T RBRACK_T
+
+%nonassoc ELSE
+%nonassoc ELSE_T
+
 %start program
 
 %%
@@ -230,7 +247,7 @@ assignment:             variable ASSIGN_T expression
 if_statement:           IF_T expression THEN_T statement if_tail
 
 if_tail:                ELSE_T statement
-                        | %empty {}
+                        | %empty %prec ELSE
 
 case_statement:         CASE_T expression OF_T cases case_tail END_T
 

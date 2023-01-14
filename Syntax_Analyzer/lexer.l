@@ -33,9 +33,9 @@
 %}
 
 /* Allows only one file as input. */
-%option noyywrap  
+%option noyywrap
 /* Ignores the diference between uppercase and lowercase letters. */
-%option case-insensitive 
+%option case-insensitive
 /* Counts the lines of the code. */
 %option yylineno
 /* Sub lexers */
