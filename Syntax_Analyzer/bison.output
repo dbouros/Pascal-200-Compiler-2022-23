@@ -1,0 +1,4027 @@
+Terminals unused in grammar
+
+   "comment"
+   ERROR_T
+
+
+State 99 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program "end of file"
+
+    1 program: header declarations subprograms comp_statement "."
+
+    2 header: "program" "id" ";"
+
+    3 declarations: constdefs typedefs vardefs
+
+    4 constdefs: "const" constant_defs ";"
+    5          | %empty
+
+    6 constant_defs: constant_defs ";" "id" "=" expression
+    7              | "id" "=" expression
+
+    8 expression: expression ">, >=, <, <=, <>" expression
+    9           | expression "=" expression
+   10           | expression "in" expression
+   11           | expression "or" expression
+   12           | expression "+, -" expression
+   13           | expression "*, /, div, mod, and" expression
+   14           | "+, -" expression
+   15           | "not" expression
+   16           | variable
+   17           | "id" "(" expressions ")"
+   18           | "length" "(" expression ")"
+   19           | "new" "(" expression ")"
+   20           | constant
+   21           | "(" expression ")"
+   22           | setlistexpression
+
+   23 variable: "id"
+   24         | variable "." "id"
+   25         | variable "[" expressions "]"
+   26         | "listfunc" "(" expression ")"
+
+   27 expressions: expressions "," expression
+   28            | expression
+
+   29 constant: "iconst"
+   30         | "rconst"
+   31         | "true, false"
+   32         | "cconst"
+
+   33 setlistexpression: "[" expressions "]"
+   34                  | "[" "]"
+
+   35 typedefs: "type" type_defs ";"
+   36         | %empty
+
+   37 type_defs: type_defs ";" "id" "=" type_def
+   38          | "id" "=" type_def
+
+   39 type_def: "array" "[" dims "]" "of" typename
+   40         | "list" "of" typename
+   41         | "set" "of" typename
+   42         | "record" fields "end"
+   43         | limit ".." limit
+
+   44 dims: dims "," limits
+   45     | limits
+
+   46 limits: limit ".." limit
+   47       | "id"
+
+   48 limit: sign "iconst"
+   49      | "cconst"
+   50      | "true, false"
+   51      | "+, -" "id"
+   52      | "id"
+
+   53 sign: "+, -"
+   54     | %empty
+
+   55 typename: standard_type
+   56         | "id"
+
+   57 standard_type: "integer"
+   58              | "real"
+   59              | "boolean"
+   60              | "char"
+
+   61 fields: fields ";" field
+   62       | field
+
+   63 field: identifiers ":" typename
+
+   64 identifiers: identifiers "," "id"
+   65            | "id"
+
+   66 vardefs: "var" variable_defs ";"
+   67        | %empty
+
+   68 variable_defs: variable_defs ";" identifiers ":" typename
+   69              | identifiers ":" typename
+
+   70 subprograms: subprograms subprogram ";"
+   71            | %empty
+
+   72 subprogram: sub_header ";" "forward"
+   73           | sub_header ";" declarations subprograms comp_statement
+
+   74 sub_header: "function" "id" formal_parameters ":" standard_type
+   75           | "function" "id" formal_parameters ":" "list"
+   76           | "procedure" "id" formal_parameters
+   77           | "function" "id"
+
+   78 formal_parameters: "(" parameter_list ")"
+   79                  | %empty
+
+   80 parameter_list: parameter_list ";" pass identifiers ":" typename
+   81               | pass identifiers ":" typename
+
+   82 pass: "var"
+   83     | %empty
+
+   84 comp_statement: "begin" statements "end"
+
+   85 statements: statements ";" statement
+   86           | statement
+
+   87 statement: assignment
+   88          | if_statement
+   89          | case_statement
+   90          | while_statement
+   91          | for_statement
+   92          | with_statement
+   93          | subprogram_call
+   94          | io_statement
+   95          | comp_statement
+   96          | %empty
+
+   97 assignment: variable ":=" expression
+   98           | variable ":=" "string"
+
+   99 if_statement: "if" expression "then" statement if_tail
+
+  100 if_tail: "else" statement
+  101        | %empty
+
+  102 case_statement: "case" expression "of" cases case_tail "end"
+
+  103 cases: cases ";" single_case
+  104      | single_case
+
+  105 single_case: label_list ":" statement
+  106            | %empty
+
+  107 label_list: label_list "," label
+  108           | label
+
+  109 label: sign constant
+  110      | sign "id"
+
+  111 case_tail: ";" "otherwise" ":" statement
+  112          | %empty
+
+  113 while_statement: "while" expression "do" statement
+  114                | error expression "do" statement
+  115                | "while" expression error statement
+
+  116 for_statement: "for" "id" ":=" iter_space "do" statement
+  117              | error "id" ":=" iter_space "do" statement
+  118              | "for" error ":=" iter_space "do" statement
+  119              | "for" "id" error iter_space "do" statement
+  120              | "for" "id" ":=" iter_space error statement
+
+  121 iter_space: expression "to" expression
+  122           | expression "downto" expression
+
+  123 with_statement: "with" variable "do" statement
+  124               | error variable "do" statement
+  125               | "with" variable error statement
+
+  126 subprogram_call: "id"
+  127                | "id" "(" expressions ")"
+
+  128 io_statement: "read" "(" read_list ")"
+  129             | "write" "(" write_list ")"
+
+  130 read_list: read_list "," read_item
+  131          | read_item
+
+  132 read_item: variable
+
+  133 write_list: write_list "," write_item
+  134           | write_item
+
+  135 write_item: expression
+  136           | "string"
+
+
+Terminals, with rules where they appear
+
+"end of file" (0) 0
+error (256) 114 115 117 118 119 120 124 125
+"program" (258) 2
+"const" (259) 4
+"type" (260) 35
+"array" (261) 39
+"list" (262) 40 75
+"set" (263) 41
+"of" (264) 39 40 41 102
+"record" (265) 42
+"var" (266) 66 82
+"function" (267) 74 75 77
+"procedure" (268) 76
+"integer" (269) 57
+"real" (270) 58
+"boolean" (271) 59
+"char" (272) 60
+"forward" (273) 72
+"length" (274) 18
+"new" (275) 19
+"begin" (276) 84
+"end" (277) 42 84 102
+"if" (278) 99
+"then" (279) 99
+"else" (280) 100
+"while" (281) 113 115
+"do" (282) 113 114 116 117 118 119 123 124
+"case" (283) 102
+"otherwise" (284) 111
+"for" (285) 116 118 119 120
+"to" (286) 121
+"downto" (287) 122
+"with" (288) 123 125
+"read" (289) 128
+"write" (290) 129
+"id" (291) 2 6 7 17 23 24 37 38 47 51 52 56 64 65 74 75 76 77 110 116
+    117 119 120 126 127
+"iconst" (292) 29 48
+"rconst" (293) 30
+"true, false" (294) 31 50
+"cconst" (295) 32 49
+">, >=, <, <=, <>" (296) 8
+"+, -" (297) 12 14 51 53
+"or" (298) 11
+"*, /, div, mod, and" (299) 13
+"not" (300) 15
+"in" (301) 10
+"listfunc" (302) 26
+"string" (303) 98 136
+"(" (304) 17 18 19 21 26 78 127 128 129
+")" (305) 17 18 19 21 26 78 127 128 129
+";" (306) 2 4 6 35 37 61 66 68 70 72 73 80 85 103 111
+"." (307) 1 24
+"," (308) 27 44 64 107 130 133
+"=" (309) 6 7 9 37 38
+":" (310) 63 68 69 74 75 80 81 105 111
+"[" (311) 25 33 34 39
+"]" (312) 25 33 34 39
+":=" (313) 97 98 116 117 118 120
+".." (314) 43 46
+"comment" (315)
+ERROR_T (316)
+ELSE (317)
+
+
+Nonterminals, with rules where they appear
+
+$accept (63)
+    on left: 0
+program (64)
+    on left: 1, on right: 0
+header (65)
+    on left: 2, on right: 1
+declarations (66)
+    on left: 3, on right: 1 73
+constdefs (67)
+    on left: 4 5, on right: 3
+constant_defs (68)
+    on left: 6 7, on right: 4 6
+expression (69)
+    on left: 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22, on right:
+    6 7 8 9 10 11 12 13 14 15 18 19 21 26 27 28 97 99 102 113 114 115
+    121 122 135
+variable (70)
+    on left: 23 24 25 26, on right: 16 24 25 97 98 123 124 125 132
+expressions (71)
+    on left: 27 28, on right: 17 25 27 33 127
+constant (72)
+    on left: 29 30 31 32, on right: 20 109
+setlistexpression (73)
+    on left: 33 34, on right: 22
+typedefs (74)
+    on left: 35 36, on right: 3
+type_defs (75)
+    on left: 37 38, on right: 35 37
+type_def (76)
+    on left: 39 40 41 42 43, on right: 37 38
+dims (77)
+    on left: 44 45, on right: 39 44
+limits (78)
+    on left: 46 47, on right: 44 45
+limit (79)
+    on left: 48 49 50 51 52, on right: 43 46
+sign (80)
+    on left: 53 54, on right: 48 109 110
+typename (81)
+    on left: 55 56, on right: 39 40 41 63 68 69 80 81
+standard_type (82)
+    on left: 57 58 59 60, on right: 55 74
+fields (83)
+    on left: 61 62, on right: 42 61
+field (84)
+    on left: 63, on right: 61 62
+identifiers (85)
+    on left: 64 65, on right: 63 64 68 69 80 81
+vardefs (86)
+    on left: 66 67, on right: 3
+variable_defs (87)
+    on left: 68 69, on right: 66 68
+subprograms (88)
+    on left: 70 71, on right: 1 70 73
+subprogram (89)
+    on left: 72 73, on right: 70
+sub_header (90)
+    on left: 74 75 76 77, on right: 72 73
+formal_parameters (91)
+    on left: 78 79, on right: 74 75 76
+parameter_list (92)
+    on left: 80 81, on right: 78 80
+pass (93)
+    on left: 82 83, on right: 80 81
+comp_statement (94)
+    on left: 84, on right: 1 73 95
+statements (95)
+    on left: 85 86, on right: 84 85
+statement (96)
+    on left: 87 88 89 90 91 92 93 94 95 96, on right: 85 86 99 100
+    105 111 113 114 115 116 117 118 119 120 123 124 125
+assignment (97)
+    on left: 97 98, on right: 87
+if_statement (98)
+    on left: 99, on right: 88
+if_tail (99)
+    on left: 100 101, on right: 99
+case_statement (100)
+    on left: 102, on right: 89
+cases (101)
+    on left: 103 104, on right: 102 103
+single_case (102)
+    on left: 105 106, on right: 103 104
+label_list (103)
+    on left: 107 108, on right: 105 107
+label (104)
+    on left: 109 110, on right: 107 108
+case_tail (105)
+    on left: 111 112, on right: 102
+while_statement (106)
+    on left: 113 114 115, on right: 90
+for_statement (107)
+    on left: 116 117 118 119 120, on right: 91
+iter_space (108)
+    on left: 121 122, on right: 116 117 118 119 120
+with_statement (109)
+    on left: 123 124 125, on right: 92
+subprogram_call (110)
+    on left: 126 127, on right: 93
+io_statement (111)
+    on left: 128 129, on right: 94
+read_list (112)
+    on left: 130 131, on right: 128 130
+read_item (113)
+    on left: 132, on right: 130 131
+write_list (114)
+    on left: 133 134, on right: 129 133
+write_item (115)
+    on left: 135 136, on right: 133 134
+
+
+State 0
+
+    0 $accept: . program "end of file"
+
+    "program"  shift, and go to state 1
+
+    program  go to state 2
+    header   go to state 3
+
+
+State 1
+
+    2 header: "program" . "id" ";"
+
+    "id"  shift, and go to state 4
+
+
+State 2
+
+    0 $accept: program . "end of file"
+
+    "end of file"  shift, and go to state 5
+
+
+State 3
+
+    1 program: header . declarations subprograms comp_statement "."
+
+    "const"  shift, and go to state 6
+
+    $default  reduce using rule 5 (constdefs)
+
+    declarations  go to state 7
+    constdefs     go to state 8
+
+
+State 4
+
+    2 header: "program" "id" . ";"
+
+    ";"  shift, and go to state 9
+
+
+State 5
+
+    0 $accept: program "end of file" .
+
+    $default  accept
+
+
+State 6
+
+    4 constdefs: "const" . constant_defs ";"
+
+    "id"  shift, and go to state 10
+
+    constant_defs  go to state 11
+
+
+State 7
+
+    1 program: header declarations . subprograms comp_statement "."
+
+    $default  reduce using rule 71 (subprograms)
+
+    subprograms  go to state 12
+
+
+State 8
+
+    3 declarations: constdefs . typedefs vardefs
+
+    "type"  shift, and go to state 13
+
+    $default  reduce using rule 36 (typedefs)
+
+    typedefs  go to state 14
+
+
+State 9
+
+    2 header: "program" "id" ";" .
+
+    $default  reduce using rule 2 (header)
+
+
+State 10
+
+    7 constant_defs: "id" . "=" expression
+
+    "="  shift, and go to state 15
+
+
+State 11
+
+    4 constdefs: "const" constant_defs . ";"
+    6 constant_defs: constant_defs . ";" "id" "=" expression
+
+    ";"  shift, and go to state 16
+
+
+State 12
+
+    1 program: header declarations subprograms . comp_statement "."
+   70 subprograms: subprograms . subprogram ";"
+
+    "function"   shift, and go to state 17
+    "procedure"  shift, and go to state 18
+    "begin"      shift, and go to state 19
+
+    subprogram      go to state 20
+    sub_header      go to state 21
+    comp_statement  go to state 22
+
+
+State 13
+
+   35 typedefs: "type" . type_defs ";"
+
+    "id"  shift, and go to state 23
+
+    type_defs  go to state 24
+
+
+State 14
+
+    3 declarations: constdefs typedefs . vardefs
+
+    "var"  shift, and go to state 25
+
+    $default  reduce using rule 67 (vardefs)
+
+    vardefs  go to state 26
+
+
+State 15
+
+    7 constant_defs: "id" "=" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 39
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 16
+
+    4 constdefs: "const" constant_defs ";" .
+    6 constant_defs: constant_defs ";" . "id" "=" expression
+
+    "id"  shift, and go to state 43
+
+    $default  reduce using rule 4 (constdefs)
+
+
+State 17
+
+   74 sub_header: "function" . "id" formal_parameters ":" standard_type
+   75           | "function" . "id" formal_parameters ":" "list"
+   77           | "function" . "id"
+
+    "id"  shift, and go to state 44
+
+
+State 18
+
+   76 sub_header: "procedure" . "id" formal_parameters
+
+    "id"  shift, and go to state 45
+
+
+State 19
+
+   84 comp_statement: "begin" . statements "end"
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"  reduce using rule 96 (statement)
+    ";"    reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statements       go to state 57
+    statement        go to state 58
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 20
+
+   70 subprograms: subprograms subprogram . ";"
+
+    ";"  shift, and go to state 67
+
+
+State 21
+
+   72 subprogram: sub_header . ";" "forward"
+   73           | sub_header . ";" declarations subprograms comp_statement
+
+    ";"  shift, and go to state 68
+
+
+State 22
+
+    1 program: header declarations subprograms comp_statement . "."
+
+    "."  shift, and go to state 69
+
+
+State 23
+
+   38 type_defs: "id" . "=" type_def
+
+    "="  shift, and go to state 70
+
+
+State 24
+
+   35 typedefs: "type" type_defs . ";"
+   37 type_defs: type_defs . ";" "id" "=" type_def
+
+    ";"  shift, and go to state 71
+
+
+State 25
+
+   66 vardefs: "var" . variable_defs ";"
+
+    "id"  shift, and go to state 72
+
+    identifiers    go to state 73
+    variable_defs  go to state 74
+
+
+State 26
+
+    3 declarations: constdefs typedefs vardefs .
+
+    $default  reduce using rule 3 (declarations)
+
+
+State 27
+
+   18 expression: "length" . "(" expression ")"
+
+    "("  shift, and go to state 75
+
+
+State 28
+
+   19 expression: "new" . "(" expression ")"
+
+    "("  shift, and go to state 76
+
+
+State 29
+
+   17 expression: "id" . "(" expressions ")"
+   23 variable: "id" .
+
+    "("  shift, and go to state 77
+
+    $default  reduce using rule 23 (variable)
+
+
+State 30
+
+   29 constant: "iconst" .
+
+    $default  reduce using rule 29 (constant)
+
+
+State 31
+
+   30 constant: "rconst" .
+
+    $default  reduce using rule 30 (constant)
+
+
+State 32
+
+   31 constant: "true, false" .
+
+    $default  reduce using rule 31 (constant)
+
+
+State 33
+
+   32 constant: "cconst" .
+
+    $default  reduce using rule 32 (constant)
+
+
+State 34
+
+   14 expression: "+, -" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 78
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 35
+
+   15 expression: "not" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 79
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 36
+
+   26 variable: "listfunc" . "(" expression ")"
+
+    "("  shift, and go to state 80
+
+
+State 37
+
+   21 expression: "(" . expression ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 81
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 38
+
+   33 setlistexpression: "[" . expressions "]"
+   34                  | "[" . "]"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+    "]"            shift, and go to state 82
+
+    expression         go to state 83
+    variable           go to state 40
+    expressions        go to state 84
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 39
+
+    7 constant_defs: "id" "=" expression .
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 7 (constant_defs)
+
+
+State 40
+
+   16 expression: variable .
+   24 variable: variable . "." "id"
+   25         | variable . "[" expressions "]"
+
+    "."  shift, and go to state 91
+    "["  shift, and go to state 92
+
+    $default  reduce using rule 16 (expression)
+
+
+State 41
+
+   20 expression: constant .
+
+    $default  reduce using rule 20 (expression)
+
+
+State 42
+
+   22 expression: setlistexpression .
+
+    $default  reduce using rule 22 (expression)
+
+
+State 43
+
+    6 constant_defs: constant_defs ";" "id" . "=" expression
+
+    "="  shift, and go to state 93
+
+
+State 44
+
+   74 sub_header: "function" "id" . formal_parameters ":" standard_type
+   75           | "function" "id" . formal_parameters ":" "list"
+   77           | "function" "id" .
+
+    "("  shift, and go to state 94
+
+    ":"       reduce using rule 79 (formal_parameters)
+    $default  reduce using rule 77 (sub_header)
+
+    formal_parameters  go to state 95
+
+
+State 45
+
+   76 sub_header: "procedure" "id" . formal_parameters
+
+    "("  shift, and go to state 94
+
+    $default  reduce using rule 79 (formal_parameters)
+
+    formal_parameters  go to state 96
+
+
+State 46
+
+  114 while_statement: error . expression "do" statement
+  117 for_statement: error . "id" ":=" iter_space "do" statement
+  124 with_statement: error . variable "do" statement
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 97
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 98
+    variable           go to state 99
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 47
+
+   99 if_statement: "if" . expression "then" statement if_tail
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 100
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 48
+
+  113 while_statement: "while" . expression "do" statement
+  115                | "while" . expression error statement
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 101
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 49
+
+  102 case_statement: "case" . expression "of" cases case_tail "end"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 102
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 50
+
+  116 for_statement: "for" . "id" ":=" iter_space "do" statement
+  118              | "for" . error ":=" iter_space "do" statement
+  119              | "for" . "id" error iter_space "do" statement
+  120              | "for" . "id" ":=" iter_space error statement
+
+    error  shift, and go to state 103
+    "id"   shift, and go to state 104
+
+
+State 51
+
+  123 with_statement: "with" . variable "do" statement
+  125               | "with" . variable error statement
+
+    "id"        shift, and go to state 105
+    "listfunc"  shift, and go to state 36
+
+    variable  go to state 106
+
+
+State 52
+
+  128 io_statement: "read" . "(" read_list ")"
+
+    "("  shift, and go to state 107
+
+
+State 53
+
+  129 io_statement: "write" . "(" write_list ")"
+
+    "("  shift, and go to state 108
+
+
+State 54
+
+   23 variable: "id" .
+  126 subprogram_call: "id" .
+  127                | "id" . "(" expressions ")"
+
+    "("  shift, and go to state 109
+
+    "end"     reduce using rule 126 (subprogram_call)
+    "else"    reduce using rule 126 (subprogram_call)
+    ";"       reduce using rule 126 (subprogram_call)
+    $default  reduce using rule 23 (variable)
+
+
+State 55
+
+   24 variable: variable . "." "id"
+   25         | variable . "[" expressions "]"
+   97 assignment: variable . ":=" expression
+   98           | variable . ":=" "string"
+
+    "."   shift, and go to state 91
+    "["   shift, and go to state 92
+    ":="  shift, and go to state 110
+
+
+State 56
+
+   95 statement: comp_statement .
+
+    $default  reduce using rule 95 (statement)
+
+
+State 57
+
+   84 comp_statement: "begin" statements . "end"
+   85 statements: statements . ";" statement
+
+    "end"  shift, and go to state 111
+    ";"    shift, and go to state 112
+
+
+State 58
+
+   86 statements: statement .
+
+    $default  reduce using rule 86 (statements)
+
+
+State 59
+
+   87 statement: assignment .
+
+    $default  reduce using rule 87 (statement)
+
+
+State 60
+
+   88 statement: if_statement .
+
+    $default  reduce using rule 88 (statement)
+
+
+State 61
+
+   89 statement: case_statement .
+
+    $default  reduce using rule 89 (statement)
+
+
+State 62
+
+   90 statement: while_statement .
+
+    $default  reduce using rule 90 (statement)
+
+
+State 63
+
+   91 statement: for_statement .
+
+    $default  reduce using rule 91 (statement)
+
+
+State 64
+
+   92 statement: with_statement .
+
+    $default  reduce using rule 92 (statement)
+
+
+State 65
+
+   93 statement: subprogram_call .
+
+    $default  reduce using rule 93 (statement)
+
+
+State 66
+
+   94 statement: io_statement .
+
+    $default  reduce using rule 94 (statement)
+
+
+State 67
+
+   70 subprograms: subprograms subprogram ";" .
+
+    $default  reduce using rule 70 (subprograms)
+
+
+State 68
+
+   72 subprogram: sub_header ";" . "forward"
+   73           | sub_header ";" . declarations subprograms comp_statement
+
+    "const"    shift, and go to state 6
+    "forward"  shift, and go to state 113
+
+    $default  reduce using rule 5 (constdefs)
+
+    declarations  go to state 114
+    constdefs     go to state 8
+
+
+State 69
+
+    1 program: header declarations subprograms comp_statement "." .
+
+    $default  reduce using rule 1 (program)
+
+
+State 70
+
+   38 type_defs: "id" "=" . type_def
+
+    "array"        shift, and go to state 115
+    "list"         shift, and go to state 116
+    "set"          shift, and go to state 117
+    "record"       shift, and go to state 118
+    "id"           shift, and go to state 119
+    "true, false"  shift, and go to state 120
+    "cconst"       shift, and go to state 121
+    "+, -"         shift, and go to state 122
+
+    $default  reduce using rule 54 (sign)
+
+    type_def  go to state 123
+    limit     go to state 124
+    sign      go to state 125
+
+
+State 71
+
+   35 typedefs: "type" type_defs ";" .
+   37 type_defs: type_defs ";" . "id" "=" type_def
+
+    "id"  shift, and go to state 126
+
+    $default  reduce using rule 35 (typedefs)
+
+
+State 72
+
+   65 identifiers: "id" .
+
+    $default  reduce using rule 65 (identifiers)
+
+
+State 73
+
+   64 identifiers: identifiers . "," "id"
+   69 variable_defs: identifiers . ":" typename
+
+    ","  shift, and go to state 127
+    ":"  shift, and go to state 128
+
+
+State 74
+
+   66 vardefs: "var" variable_defs . ";"
+   68 variable_defs: variable_defs . ";" identifiers ":" typename
+
+    ";"  shift, and go to state 129
+
+
+State 75
+
+   18 expression: "length" "(" . expression ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 130
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 76
+
+   19 expression: "new" "(" . expression ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 131
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 77
+
+   17 expression: "id" "(" . expressions ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 83
+    variable           go to state 40
+    expressions        go to state 132
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 78
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   14           | "+, -" expression .
+
+    "*, /, div, mod, and"  shift, and go to state 88
+
+    $default  reduce using rule 14 (expression)
+
+
+State 79
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   15           | "not" expression .
+
+    $default  reduce using rule 15 (expression)
+
+
+State 80
+
+   26 variable: "listfunc" "(" . expression ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 133
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 81
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   21           | "(" expression . ")"
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    ")"                    shift, and go to state 134
+    "="                    shift, and go to state 90
+
+
+State 82
+
+   34 setlistexpression: "[" "]" .
+
+    $default  reduce using rule 34 (setlistexpression)
+
+
+State 83
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   28 expressions: expression .
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 28 (expressions)
+
+
+State 84
+
+   27 expressions: expressions . "," expression
+   33 setlistexpression: "[" expressions . "]"
+
+    ","  shift, and go to state 135
+    "]"  shift, and go to state 136
+
+
+State 85
+
+    8 expression: expression ">, >=, <, <=, <>" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 137
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 86
+
+   12 expression: expression "+, -" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 138
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 87
+
+   11 expression: expression "or" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 139
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 88
+
+   13 expression: expression "*, /, div, mod, and" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 140
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 89
+
+   10 expression: expression "in" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 141
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 90
+
+    9 expression: expression "=" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 142
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 91
+
+   24 variable: variable "." . "id"
+
+    "id"  shift, and go to state 143
+
+
+State 92
+
+   25 variable: variable "[" . expressions "]"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 83
+    variable           go to state 40
+    expressions        go to state 144
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 93
+
+    6 constant_defs: constant_defs ";" "id" "=" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 145
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 94
+
+   78 formal_parameters: "(" . parameter_list ")"
+
+    "var"  shift, and go to state 146
+
+    $default  reduce using rule 83 (pass)
+
+    parameter_list  go to state 147
+    pass            go to state 148
+
+
+State 95
+
+   74 sub_header: "function" "id" formal_parameters . ":" standard_type
+   75           | "function" "id" formal_parameters . ":" "list"
+
+    ":"  shift, and go to state 149
+
+
+State 96
+
+   76 sub_header: "procedure" "id" formal_parameters .
+
+    $default  reduce using rule 76 (sub_header)
+
+
+State 97
+
+   17 expression: "id" . "(" expressions ")"
+   23 variable: "id" .
+  117 for_statement: error "id" . ":=" iter_space "do" statement
+
+    "("   shift, and go to state 77
+    ":="  shift, and go to state 150
+
+    $default  reduce using rule 23 (variable)
+
+
+State 98
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  114 while_statement: error expression . "do" statement
+
+    "do"                   shift, and go to state 151
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+
+State 99
+
+   16 expression: variable .
+   24 variable: variable . "." "id"
+   25         | variable . "[" expressions "]"
+  124 with_statement: error variable . "do" statement
+
+    "do"  shift, and go to state 152
+    "."   shift, and go to state 91
+    "["   shift, and go to state 92
+
+    "do"      [reduce using rule 16 (expression)]
+    $default  reduce using rule 16 (expression)
+
+
+State 100
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   99 if_statement: "if" expression . "then" statement if_tail
+
+    "then"                 shift, and go to state 153
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+
+State 101
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  113 while_statement: "while" expression . "do" statement
+  115                | "while" expression . error statement
+
+    error                  shift, and go to state 154
+    "do"                   shift, and go to state 155
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+
+State 102
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  102 case_statement: "case" expression . "of" cases case_tail "end"
+
+    "of"                   shift, and go to state 156
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+
+State 103
+
+  118 for_statement: "for" error . ":=" iter_space "do" statement
+
+    ":="  shift, and go to state 157
+
+
+State 104
+
+  116 for_statement: "for" "id" . ":=" iter_space "do" statement
+  119              | "for" "id" . error iter_space "do" statement
+  120              | "for" "id" . ":=" iter_space error statement
+
+    error  shift, and go to state 158
+    ":="   shift, and go to state 159
+
+
+State 105
+
+   23 variable: "id" .
+
+    $default  reduce using rule 23 (variable)
+
+
+State 106
+
+   24 variable: variable . "." "id"
+   25         | variable . "[" expressions "]"
+  123 with_statement: "with" variable . "do" statement
+  125               | "with" variable . error statement
+
+    error  shift, and go to state 160
+    "do"   shift, and go to state 161
+    "."    shift, and go to state 91
+    "["    shift, and go to state 92
+
+
+State 107
+
+  128 io_statement: "read" "(" . read_list ")"
+
+    "id"        shift, and go to state 105
+    "listfunc"  shift, and go to state 36
+
+    variable   go to state 162
+    read_list  go to state 163
+    read_item  go to state 164
+
+
+State 108
+
+  129 io_statement: "write" "(" . write_list ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "string"       shift, and go to state 165
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 166
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+    write_list         go to state 167
+    write_item         go to state 168
+
+
+State 109
+
+  127 subprogram_call: "id" "(" . expressions ")"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 83
+    variable           go to state 40
+    expressions        go to state 169
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 110
+
+   97 assignment: variable ":=" . expression
+   98           | variable ":=" . "string"
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "string"       shift, and go to state 170
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 171
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 111
+
+   84 comp_statement: "begin" statements "end" .
+
+    $default  reduce using rule 84 (comp_statement)
+
+
+State 112
+
+   85 statements: statements ";" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"  reduce using rule 96 (statement)
+    ";"    reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 172
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 113
+
+   72 subprogram: sub_header ";" "forward" .
+
+    $default  reduce using rule 72 (subprogram)
+
+
+State 114
+
+   73 subprogram: sub_header ";" declarations . subprograms comp_statement
+
+    $default  reduce using rule 71 (subprograms)
+
+    subprograms  go to state 173
+
+
+State 115
+
+   39 type_def: "array" . "[" dims "]" "of" typename
+
+    "["  shift, and go to state 174
+
+
+State 116
+
+   40 type_def: "list" . "of" typename
+
+    "of"  shift, and go to state 175
+
+
+State 117
+
+   41 type_def: "set" . "of" typename
+
+    "of"  shift, and go to state 176
+
+
+State 118
+
+   42 type_def: "record" . fields "end"
+
+    "id"  shift, and go to state 72
+
+    fields       go to state 177
+    field        go to state 178
+    identifiers  go to state 179
+
+
+State 119
+
+   52 limit: "id" .
+
+    $default  reduce using rule 52 (limit)
+
+
+State 120
+
+   50 limit: "true, false" .
+
+    $default  reduce using rule 50 (limit)
+
+
+State 121
+
+   49 limit: "cconst" .
+
+    $default  reduce using rule 49 (limit)
+
+
+State 122
+
+   51 limit: "+, -" . "id"
+   53 sign: "+, -" .
+
+    "id"  shift, and go to state 180
+
+    $default  reduce using rule 53 (sign)
+
+
+State 123
+
+   38 type_defs: "id" "=" type_def .
+
+    $default  reduce using rule 38 (type_defs)
+
+
+State 124
+
+   43 type_def: limit . ".." limit
+
+    ".."  shift, and go to state 181
+
+
+State 125
+
+   48 limit: sign . "iconst"
+
+    "iconst"  shift, and go to state 182
+
+
+State 126
+
+   37 type_defs: type_defs ";" "id" . "=" type_def
+
+    "="  shift, and go to state 183
+
+
+State 127
+
+   64 identifiers: identifiers "," . "id"
+
+    "id"  shift, and go to state 184
+
+
+State 128
+
+   69 variable_defs: identifiers ":" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 190
+    standard_type  go to state 191
+
+
+State 129
+
+   66 vardefs: "var" variable_defs ";" .
+   68 variable_defs: variable_defs ";" . identifiers ":" typename
+
+    "id"  shift, and go to state 72
+
+    $default  reduce using rule 66 (vardefs)
+
+    identifiers  go to state 192
+
+
+State 130
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   18           | "length" "(" expression . ")"
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    ")"                    shift, and go to state 193
+    "="                    shift, and go to state 90
+
+
+State 131
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   19           | "new" "(" expression . ")"
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    ")"                    shift, and go to state 194
+    "="                    shift, and go to state 90
+
+
+State 132
+
+   17 expression: "id" "(" expressions . ")"
+   27 expressions: expressions . "," expression
+
+    ")"  shift, and go to state 195
+    ","  shift, and go to state 135
+
+
+State 133
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   26 variable: "listfunc" "(" expression . ")"
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    ")"                    shift, and go to state 196
+    "="                    shift, and go to state 90
+
+
+State 134
+
+   21 expression: "(" expression ")" .
+
+    $default  reduce using rule 21 (expression)
+
+
+State 135
+
+   27 expressions: expressions "," . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 197
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 136
+
+   33 setlistexpression: "[" expressions "]" .
+
+    $default  reduce using rule 33 (setlistexpression)
+
+
+State 137
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    8           | expression ">, >=, <, <=, <>" expression .
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+
+    ">, >=, <, <=, <>"  error (nonassociative)
+    "in"                error (nonassociative)
+    "="                 error (nonassociative)
+
+    $default  reduce using rule 8 (expression)
+
+
+State 138
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   12           | expression "+, -" expression .
+   13           | expression . "*, /, div, mod, and" expression
+
+    "*, /, div, mod, and"  shift, and go to state 88
+
+    $default  reduce using rule 12 (expression)
+
+
+State 139
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   11           | expression "or" expression .
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+
+    "*, /, div, mod, and"  shift, and go to state 88
+
+    $default  reduce using rule 11 (expression)
+
+
+State 140
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   13           | expression "*, /, div, mod, and" expression .
+
+    $default  reduce using rule 13 (expression)
+
+
+State 141
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   10           | expression "in" expression .
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+
+    ">, >=, <, <=, <>"  error (nonassociative)
+    "in"                error (nonassociative)
+    "="                 error (nonassociative)
+
+    $default  reduce using rule 10 (expression)
+
+
+State 142
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+    9           | expression "=" expression .
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+
+    ">, >=, <, <=, <>"  error (nonassociative)
+    "in"                error (nonassociative)
+    "="                 error (nonassociative)
+
+    $default  reduce using rule 9 (expression)
+
+
+State 143
+
+   24 variable: variable "." "id" .
+
+    $default  reduce using rule 24 (variable)
+
+
+State 144
+
+   25 variable: variable "[" expressions . "]"
+   27 expressions: expressions . "," expression
+
+    ","  shift, and go to state 135
+    "]"  shift, and go to state 198
+
+
+State 145
+
+    6 constant_defs: constant_defs ";" "id" "=" expression .
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 6 (constant_defs)
+
+
+State 146
+
+   82 pass: "var" .
+
+    $default  reduce using rule 82 (pass)
+
+
+State 147
+
+   78 formal_parameters: "(" parameter_list . ")"
+   80 parameter_list: parameter_list . ";" pass identifiers ":" typename
+
+    ")"  shift, and go to state 199
+    ";"  shift, and go to state 200
+
+
+State 148
+
+   81 parameter_list: pass . identifiers ":" typename
+
+    "id"  shift, and go to state 72
+
+    identifiers  go to state 201
+
+
+State 149
+
+   74 sub_header: "function" "id" formal_parameters ":" . standard_type
+   75           | "function" "id" formal_parameters ":" . "list"
+
+    "list"     shift, and go to state 202
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+
+    standard_type  go to state 203
+
+
+State 150
+
+  117 for_statement: error "id" ":=" . iter_space "do" statement
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 204
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+    iter_space         go to state 205
+
+
+State 151
+
+  114 while_statement: error expression "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 206
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 152
+
+  124 with_statement: error variable "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 207
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 153
+
+   99 if_statement: "if" expression "then" . statement if_tail
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 208
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 154
+
+  115 while_statement: "while" expression error . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 209
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 155
+
+  113 while_statement: "while" expression "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 210
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 156
+
+  102 case_statement: "case" expression "of" . cases case_tail "end"
+
+    "+, -"  shift, and go to state 211
+
+    "end"     reduce using rule 106 (single_case)
+    ";"       reduce using rule 106 (single_case)
+    $default  reduce using rule 54 (sign)
+
+    sign         go to state 212
+    cases        go to state 213
+    single_case  go to state 214
+    label_list   go to state 215
+    label        go to state 216
+
+
+State 157
+
+  118 for_statement: "for" error ":=" . iter_space "do" statement
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 204
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+    iter_space         go to state 217
+
+
+State 158
+
+  119 for_statement: "for" "id" error . iter_space "do" statement
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 204
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+    iter_space         go to state 218
+
+
+State 159
+
+  116 for_statement: "for" "id" ":=" . iter_space "do" statement
+  120              | "for" "id" ":=" . iter_space error statement
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 204
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+    iter_space         go to state 219
+
+
+State 160
+
+  125 with_statement: "with" variable error . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 220
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 161
+
+  123 with_statement: "with" variable "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 221
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 162
+
+   24 variable: variable . "." "id"
+   25         | variable . "[" expressions "]"
+  132 read_item: variable .
+
+    "."  shift, and go to state 91
+    "["  shift, and go to state 92
+
+    $default  reduce using rule 132 (read_item)
+
+
+State 163
+
+  128 io_statement: "read" "(" read_list . ")"
+  130 read_list: read_list . "," read_item
+
+    ")"  shift, and go to state 222
+    ","  shift, and go to state 223
+
+
+State 164
+
+  131 read_list: read_item .
+
+    $default  reduce using rule 131 (read_list)
+
+
+State 165
+
+  136 write_item: "string" .
+
+    $default  reduce using rule 136 (write_item)
+
+
+State 166
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  135 write_item: expression .
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 135 (write_item)
+
+
+State 167
+
+  129 io_statement: "write" "(" write_list . ")"
+  133 write_list: write_list . "," write_item
+
+    ")"  shift, and go to state 224
+    ","  shift, and go to state 225
+
+
+State 168
+
+  134 write_list: write_item .
+
+    $default  reduce using rule 134 (write_list)
+
+
+State 169
+
+   27 expressions: expressions . "," expression
+  127 subprogram_call: "id" "(" expressions . ")"
+
+    ")"  shift, and go to state 226
+    ","  shift, and go to state 135
+
+
+State 170
+
+   98 assignment: variable ":=" "string" .
+
+    $default  reduce using rule 98 (assignment)
+
+
+State 171
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   97 assignment: variable ":=" expression .
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 97 (assignment)
+
+
+State 172
+
+   85 statements: statements ";" statement .
+
+    $default  reduce using rule 85 (statements)
+
+
+State 173
+
+   70 subprograms: subprograms . subprogram ";"
+   73 subprogram: sub_header ";" declarations subprograms . comp_statement
+
+    "function"   shift, and go to state 17
+    "procedure"  shift, and go to state 18
+    "begin"      shift, and go to state 19
+
+    subprogram      go to state 20
+    sub_header      go to state 21
+    comp_statement  go to state 227
+
+
+State 174
+
+   39 type_def: "array" "[" . dims "]" "of" typename
+
+    "id"           shift, and go to state 228
+    "true, false"  shift, and go to state 120
+    "cconst"       shift, and go to state 121
+    "+, -"         shift, and go to state 122
+
+    $default  reduce using rule 54 (sign)
+
+    dims    go to state 229
+    limits  go to state 230
+    limit   go to state 231
+    sign    go to state 125
+
+
+State 175
+
+   40 type_def: "list" "of" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 232
+    standard_type  go to state 191
+
+
+State 176
+
+   41 type_def: "set" "of" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 233
+    standard_type  go to state 191
+
+
+State 177
+
+   42 type_def: "record" fields . "end"
+   61 fields: fields . ";" field
+
+    "end"  shift, and go to state 234
+    ";"    shift, and go to state 235
+
+
+State 178
+
+   62 fields: field .
+
+    $default  reduce using rule 62 (fields)
+
+
+State 179
+
+   63 field: identifiers . ":" typename
+   64 identifiers: identifiers . "," "id"
+
+    ","  shift, and go to state 127
+    ":"  shift, and go to state 236
+
+
+State 180
+
+   51 limit: "+, -" "id" .
+
+    $default  reduce using rule 51 (limit)
+
+
+State 181
+
+   43 type_def: limit ".." . limit
+
+    "id"           shift, and go to state 119
+    "true, false"  shift, and go to state 120
+    "cconst"       shift, and go to state 121
+    "+, -"         shift, and go to state 122
+
+    $default  reduce using rule 54 (sign)
+
+    limit  go to state 237
+    sign   go to state 125
+
+
+State 182
+
+   48 limit: sign "iconst" .
+
+    $default  reduce using rule 48 (limit)
+
+
+State 183
+
+   37 type_defs: type_defs ";" "id" "=" . type_def
+
+    "array"        shift, and go to state 115
+    "list"         shift, and go to state 116
+    "set"          shift, and go to state 117
+    "record"       shift, and go to state 118
+    "id"           shift, and go to state 119
+    "true, false"  shift, and go to state 120
+    "cconst"       shift, and go to state 121
+    "+, -"         shift, and go to state 122
+
+    $default  reduce using rule 54 (sign)
+
+    type_def  go to state 238
+    limit     go to state 124
+    sign      go to state 125
+
+
+State 184
+
+   64 identifiers: identifiers "," "id" .
+
+    $default  reduce using rule 64 (identifiers)
+
+
+State 185
+
+   57 standard_type: "integer" .
+
+    $default  reduce using rule 57 (standard_type)
+
+
+State 186
+
+   58 standard_type: "real" .
+
+    $default  reduce using rule 58 (standard_type)
+
+
+State 187
+
+   59 standard_type: "boolean" .
+
+    $default  reduce using rule 59 (standard_type)
+
+
+State 188
+
+   60 standard_type: "char" .
+
+    $default  reduce using rule 60 (standard_type)
+
+
+State 189
+
+   56 typename: "id" .
+
+    $default  reduce using rule 56 (typename)
+
+
+State 190
+
+   69 variable_defs: identifiers ":" typename .
+
+    $default  reduce using rule 69 (variable_defs)
+
+
+State 191
+
+   55 typename: standard_type .
+
+    $default  reduce using rule 55 (typename)
+
+
+State 192
+
+   64 identifiers: identifiers . "," "id"
+   68 variable_defs: variable_defs ";" identifiers . ":" typename
+
+    ","  shift, and go to state 127
+    ":"  shift, and go to state 239
+
+
+State 193
+
+   18 expression: "length" "(" expression ")" .
+
+    $default  reduce using rule 18 (expression)
+
+
+State 194
+
+   19 expression: "new" "(" expression ")" .
+
+    $default  reduce using rule 19 (expression)
+
+
+State 195
+
+   17 expression: "id" "(" expressions ")" .
+
+    $default  reduce using rule 17 (expression)
+
+
+State 196
+
+   26 variable: "listfunc" "(" expression ")" .
+
+    $default  reduce using rule 26 (variable)
+
+
+State 197
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+   27 expressions: expressions "," expression .
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 27 (expressions)
+
+
+State 198
+
+   25 variable: variable "[" expressions "]" .
+
+    $default  reduce using rule 25 (variable)
+
+
+State 199
+
+   78 formal_parameters: "(" parameter_list ")" .
+
+    $default  reduce using rule 78 (formal_parameters)
+
+
+State 200
+
+   80 parameter_list: parameter_list ";" . pass identifiers ":" typename
+
+    "var"  shift, and go to state 146
+
+    $default  reduce using rule 83 (pass)
+
+    pass  go to state 240
+
+
+State 201
+
+   64 identifiers: identifiers . "," "id"
+   81 parameter_list: pass identifiers . ":" typename
+
+    ","  shift, and go to state 127
+    ":"  shift, and go to state 241
+
+
+State 202
+
+   75 sub_header: "function" "id" formal_parameters ":" "list" .
+
+    $default  reduce using rule 75 (sub_header)
+
+
+State 203
+
+   74 sub_header: "function" "id" formal_parameters ":" standard_type .
+
+    $default  reduce using rule 74 (sub_header)
+
+
+State 204
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  121 iter_space: expression . "to" expression
+  122           | expression . "downto" expression
+
+    "to"                   shift, and go to state 242
+    "downto"               shift, and go to state 243
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+
+State 205
+
+  117 for_statement: error "id" ":=" iter_space . "do" statement
+
+    "do"  shift, and go to state 244
+
+
+State 206
+
+  114 while_statement: error expression "do" statement .
+
+    $default  reduce using rule 114 (while_statement)
+
+
+State 207
+
+  124 with_statement: error variable "do" statement .
+
+    $default  reduce using rule 124 (with_statement)
+
+
+State 208
+
+   99 if_statement: "if" expression "then" statement . if_tail
+
+    "else"  shift, and go to state 245
+
+    $default  reduce using rule 101 (if_tail)
+
+    if_tail  go to state 246
+
+
+State 209
+
+  115 while_statement: "while" expression error statement .
+
+    $default  reduce using rule 115 (while_statement)
+
+
+State 210
+
+  113 while_statement: "while" expression "do" statement .
+
+    $default  reduce using rule 113 (while_statement)
+
+
+State 211
+
+   53 sign: "+, -" .
+
+    $default  reduce using rule 53 (sign)
+
+
+State 212
+
+  109 label: sign . constant
+  110      | sign . "id"
+
+    "id"           shift, and go to state 247
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+
+    constant  go to state 248
+
+
+State 213
+
+  102 case_statement: "case" expression "of" cases . case_tail "end"
+  103 cases: cases . ";" single_case
+
+    ";"  shift, and go to state 249
+
+    $default  reduce using rule 112 (case_tail)
+
+    case_tail  go to state 250
+
+
+State 214
+
+  104 cases: single_case .
+
+    $default  reduce using rule 104 (cases)
+
+
+State 215
+
+  105 single_case: label_list . ":" statement
+  107 label_list: label_list . "," label
+
+    ","  shift, and go to state 251
+    ":"  shift, and go to state 252
+
+
+State 216
+
+  108 label_list: label .
+
+    $default  reduce using rule 108 (label_list)
+
+
+State 217
+
+  118 for_statement: "for" error ":=" iter_space . "do" statement
+
+    "do"  shift, and go to state 253
+
+
+State 218
+
+  119 for_statement: "for" "id" error iter_space . "do" statement
+
+    "do"  shift, and go to state 254
+
+
+State 219
+
+  116 for_statement: "for" "id" ":=" iter_space . "do" statement
+  120              | "for" "id" ":=" iter_space . error statement
+
+    error  shift, and go to state 255
+    "do"   shift, and go to state 256
+
+
+State 220
+
+  125 with_statement: "with" variable error statement .
+
+    $default  reduce using rule 125 (with_statement)
+
+
+State 221
+
+  123 with_statement: "with" variable "do" statement .
+
+    $default  reduce using rule 123 (with_statement)
+
+
+State 222
+
+  128 io_statement: "read" "(" read_list ")" .
+
+    $default  reduce using rule 128 (io_statement)
+
+
+State 223
+
+  130 read_list: read_list "," . read_item
+
+    "id"        shift, and go to state 105
+    "listfunc"  shift, and go to state 36
+
+    variable   go to state 162
+    read_item  go to state 257
+
+
+State 224
+
+  129 io_statement: "write" "(" write_list ")" .
+
+    $default  reduce using rule 129 (io_statement)
+
+
+State 225
+
+  133 write_list: write_list "," . write_item
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "string"       shift, and go to state 165
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 166
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+    write_item         go to state 258
+
+
+State 226
+
+  127 subprogram_call: "id" "(" expressions ")" .
+
+    $default  reduce using rule 127 (subprogram_call)
+
+
+State 227
+
+   73 subprogram: sub_header ";" declarations subprograms comp_statement .
+
+    $default  reduce using rule 73 (subprogram)
+
+
+State 228
+
+   47 limits: "id" .
+   52 limit: "id" .
+
+    ".."      reduce using rule 52 (limit)
+    $default  reduce using rule 47 (limits)
+
+
+State 229
+
+   39 type_def: "array" "[" dims . "]" "of" typename
+   44 dims: dims . "," limits
+
+    ","  shift, and go to state 259
+    "]"  shift, and go to state 260
+
+
+State 230
+
+   45 dims: limits .
+
+    $default  reduce using rule 45 (dims)
+
+
+State 231
+
+   46 limits: limit . ".." limit
+
+    ".."  shift, and go to state 261
+
+
+State 232
+
+   40 type_def: "list" "of" typename .
+
+    $default  reduce using rule 40 (type_def)
+
+
+State 233
+
+   41 type_def: "set" "of" typename .
+
+    $default  reduce using rule 41 (type_def)
+
+
+State 234
+
+   42 type_def: "record" fields "end" .
+
+    $default  reduce using rule 42 (type_def)
+
+
+State 235
+
+   61 fields: fields ";" . field
+
+    "id"  shift, and go to state 72
+
+    field        go to state 262
+    identifiers  go to state 179
+
+
+State 236
+
+   63 field: identifiers ":" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 263
+    standard_type  go to state 191
+
+
+State 237
+
+   43 type_def: limit ".." limit .
+
+    $default  reduce using rule 43 (type_def)
+
+
+State 238
+
+   37 type_defs: type_defs ";" "id" "=" type_def .
+
+    $default  reduce using rule 37 (type_defs)
+
+
+State 239
+
+   68 variable_defs: variable_defs ";" identifiers ":" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 264
+    standard_type  go to state 191
+
+
+State 240
+
+   80 parameter_list: parameter_list ";" pass . identifiers ":" typename
+
+    "id"  shift, and go to state 72
+
+    identifiers  go to state 265
+
+
+State 241
+
+   81 parameter_list: pass identifiers ":" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 266
+    standard_type  go to state 191
+
+
+State 242
+
+  121 iter_space: expression "to" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 267
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 243
+
+  122 iter_space: expression "downto" . expression
+
+    "length"       shift, and go to state 27
+    "new"          shift, and go to state 28
+    "id"           shift, and go to state 29
+    "iconst"       shift, and go to state 30
+    "rconst"       shift, and go to state 31
+    "true, false"  shift, and go to state 32
+    "cconst"       shift, and go to state 33
+    "+, -"         shift, and go to state 34
+    "not"          shift, and go to state 35
+    "listfunc"     shift, and go to state 36
+    "("            shift, and go to state 37
+    "["            shift, and go to state 38
+
+    expression         go to state 268
+    variable           go to state 40
+    constant           go to state 41
+    setlistexpression  go to state 42
+
+
+State 244
+
+  117 for_statement: error "id" ":=" iter_space "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 269
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 245
+
+  100 if_tail: "else" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 270
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 246
+
+   99 if_statement: "if" expression "then" statement if_tail .
+
+    $default  reduce using rule 99 (if_statement)
+
+
+State 247
+
+  110 label: sign "id" .
+
+    $default  reduce using rule 110 (label)
+
+
+State 248
+
+  109 label: sign constant .
+
+    $default  reduce using rule 109 (label)
+
+
+State 249
+
+  103 cases: cases ";" . single_case
+  111 case_tail: ";" . "otherwise" ":" statement
+
+    "otherwise"  shift, and go to state 271
+    "+, -"       shift, and go to state 211
+
+    "end"     reduce using rule 106 (single_case)
+    ";"       reduce using rule 106 (single_case)
+    $default  reduce using rule 54 (sign)
+
+    sign         go to state 212
+    single_case  go to state 272
+    label_list   go to state 215
+    label        go to state 216
+
+
+State 250
+
+  102 case_statement: "case" expression "of" cases case_tail . "end"
+
+    "end"  shift, and go to state 273
+
+
+State 251
+
+  107 label_list: label_list "," . label
+
+    "+, -"  shift, and go to state 211
+
+    $default  reduce using rule 54 (sign)
+
+    sign   go to state 212
+    label  go to state 274
+
+
+State 252
+
+  105 single_case: label_list ":" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"  reduce using rule 96 (statement)
+    ";"    reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 275
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 253
+
+  118 for_statement: "for" error ":=" iter_space "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 276
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 254
+
+  119 for_statement: "for" "id" error iter_space "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 277
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 255
+
+  120 for_statement: "for" "id" ":=" iter_space error . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 278
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 256
+
+  116 for_statement: "for" "id" ":=" iter_space "do" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"   reduce using rule 96 (statement)
+    "else"  reduce using rule 96 (statement)
+    ";"     reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 279
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 257
+
+  130 read_list: read_list "," read_item .
+
+    $default  reduce using rule 130 (read_list)
+
+
+State 258
+
+  133 write_list: write_list "," write_item .
+
+    $default  reduce using rule 133 (write_list)
+
+
+State 259
+
+   44 dims: dims "," . limits
+
+    "id"           shift, and go to state 228
+    "true, false"  shift, and go to state 120
+    "cconst"       shift, and go to state 121
+    "+, -"         shift, and go to state 122
+
+    $default  reduce using rule 54 (sign)
+
+    limits  go to state 280
+    limit   go to state 231
+    sign    go to state 125
+
+
+State 260
+
+   39 type_def: "array" "[" dims "]" . "of" typename
+
+    "of"  shift, and go to state 281
+
+
+State 261
+
+   46 limits: limit ".." . limit
+
+    "id"           shift, and go to state 119
+    "true, false"  shift, and go to state 120
+    "cconst"       shift, and go to state 121
+    "+, -"         shift, and go to state 122
+
+    $default  reduce using rule 54 (sign)
+
+    limit  go to state 282
+    sign   go to state 125
+
+
+State 262
+
+   61 fields: fields ";" field .
+
+    $default  reduce using rule 61 (fields)
+
+
+State 263
+
+   63 field: identifiers ":" typename .
+
+    $default  reduce using rule 63 (field)
+
+
+State 264
+
+   68 variable_defs: variable_defs ";" identifiers ":" typename .
+
+    $default  reduce using rule 68 (variable_defs)
+
+
+State 265
+
+   64 identifiers: identifiers . "," "id"
+   80 parameter_list: parameter_list ";" pass identifiers . ":" typename
+
+    ","  shift, and go to state 127
+    ":"  shift, and go to state 283
+
+
+State 266
+
+   81 parameter_list: pass identifiers ":" typename .
+
+    $default  reduce using rule 81 (parameter_list)
+
+
+State 267
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  121 iter_space: expression "to" expression .
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 121 (iter_space)
+
+
+State 268
+
+    8 expression: expression . ">, >=, <, <=, <>" expression
+    9           | expression . "=" expression
+   10           | expression . "in" expression
+   11           | expression . "or" expression
+   12           | expression . "+, -" expression
+   13           | expression . "*, /, div, mod, and" expression
+  122 iter_space: expression "downto" expression .
+
+    ">, >=, <, <=, <>"     shift, and go to state 85
+    "+, -"                 shift, and go to state 86
+    "or"                   shift, and go to state 87
+    "*, /, div, mod, and"  shift, and go to state 88
+    "in"                   shift, and go to state 89
+    "="                    shift, and go to state 90
+
+    $default  reduce using rule 122 (iter_space)
+
+
+State 269
+
+  117 for_statement: error "id" ":=" iter_space "do" statement .
+
+    $default  reduce using rule 117 (for_statement)
+
+
+State 270
+
+  100 if_tail: "else" statement .
+
+    $default  reduce using rule 100 (if_tail)
+
+
+State 271
+
+  111 case_tail: ";" "otherwise" . ":" statement
+
+    ":"  shift, and go to state 284
+
+
+State 272
+
+  103 cases: cases ";" single_case .
+
+    $default  reduce using rule 103 (cases)
+
+
+State 273
+
+  102 case_statement: "case" expression "of" cases case_tail "end" .
+
+    $default  reduce using rule 102 (case_statement)
+
+
+State 274
+
+  107 label_list: label_list "," label .
+
+    $default  reduce using rule 107 (label_list)
+
+
+State 275
+
+  105 single_case: label_list ":" statement .
+
+    $default  reduce using rule 105 (single_case)
+
+
+State 276
+
+  118 for_statement: "for" error ":=" iter_space "do" statement .
+
+    $default  reduce using rule 118 (for_statement)
+
+
+State 277
+
+  119 for_statement: "for" "id" error iter_space "do" statement .
+
+    $default  reduce using rule 119 (for_statement)
+
+
+State 278
+
+  120 for_statement: "for" "id" ":=" iter_space error statement .
+
+    $default  reduce using rule 120 (for_statement)
+
+
+State 279
+
+  116 for_statement: "for" "id" ":=" iter_space "do" statement .
+
+    $default  reduce using rule 116 (for_statement)
+
+
+State 280
+
+   44 dims: dims "," limits .
+
+    $default  reduce using rule 44 (dims)
+
+
+State 281
+
+   39 type_def: "array" "[" dims "]" "of" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 285
+    standard_type  go to state 191
+
+
+State 282
+
+   46 limits: limit ".." limit .
+
+    $default  reduce using rule 46 (limits)
+
+
+State 283
+
+   80 parameter_list: parameter_list ";" pass identifiers ":" . typename
+
+    "integer"  shift, and go to state 185
+    "real"     shift, and go to state 186
+    "boolean"  shift, and go to state 187
+    "char"     shift, and go to state 188
+    "id"       shift, and go to state 189
+
+    typename       go to state 286
+    standard_type  go to state 191
+
+
+State 284
+
+  111 case_tail: ";" "otherwise" ":" . statement
+
+    error       shift, and go to state 46
+    "begin"     shift, and go to state 19
+    "if"        shift, and go to state 47
+    "while"     shift, and go to state 48
+    "case"      shift, and go to state 49
+    "for"       shift, and go to state 50
+    "with"      shift, and go to state 51
+    "read"      shift, and go to state 52
+    "write"     shift, and go to state 53
+    "id"        shift, and go to state 54
+    "listfunc"  shift, and go to state 36
+
+    "end"  reduce using rule 96 (statement)
+
+    variable         go to state 55
+    comp_statement   go to state 56
+    statement        go to state 287
+    assignment       go to state 59
+    if_statement     go to state 60
+    case_statement   go to state 61
+    while_statement  go to state 62
+    for_statement    go to state 63
+    with_statement   go to state 64
+    subprogram_call  go to state 65
+    io_statement     go to state 66
+
+
+State 285
+
+   39 type_def: "array" "[" dims "]" "of" typename .
+
+    $default  reduce using rule 39 (type_def)
+
+
+State 286
+
+   80 parameter_list: parameter_list ";" pass identifiers ":" typename .
+
+    $default  reduce using rule 80 (parameter_list)
+
+
+State 287
+
+  111 case_tail: ";" "otherwise" ":" statement .
+
+    $default  reduce using rule 111 (case_tail)

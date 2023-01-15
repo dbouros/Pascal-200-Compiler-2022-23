@@ -10,12 +10,13 @@
     extern void yyterminate();
     extern FILE *yyin;
     extern char *yytext;
+    extern int yylineno;
 
     extern char str_Arr[2048];
 
     int err_counter;
-    void yyerror(char const *s);
-    
+    void yyerror(char const *error_mess);
+
 %}
 
 %error-verbose
@@ -93,7 +94,7 @@
 %token      DOTDOT_T       ".."
 
 %token      COMMENT_T      "comment"
-%token      ERROR_T        "error"
+%token      ERROR_T        
 
 %token      EOF_T      0   "end of file"
 
@@ -190,7 +191,10 @@ sign:                   ADDOP_T | %empty {}
 typename:               standard_type
                         | ID_T
 
-standard_type:          INTEGER_T | REAL_T | BOOLEAN_T | CHAR_T
+standard_type:          INTEGER_T 
+                        | REAL_T 
+                        | BOOLEAN_T 
+                        | CHAR_T
 
 fields:                 fields SEMI_T field
                         | field
@@ -223,7 +227,8 @@ formal_parameters:      LPAREN_T parameter_list RPAREN_T
 parameter_list:         parameter_list SEMI_T pass identifiers COLON_T typename
                         | pass identifiers COLON_T typename
 
-pass:                   VAR_T | %empty {}
+pass:                   VAR_T 
+                        | %empty {}
 
 comp_statement:         BEGIN_T statements END_T
 
@@ -267,13 +272,21 @@ case_tail:              SEMI_T OTHERWISE_T COLON_T statement
                         | %empty {}
 
 while_statement:        WHILE_T expression DO_T statement
+                        | error expression DO_T statement                                       {yyerrok;}
+                        | WHILE_T expression error statement                                    {yyerrok;}
 
 for_statement:          FOR_T ID_T ASSIGN_T iter_space DO_T statement
+                        | error ID_T ASSIGN_T iter_space DO_T statement                         {yyerrok;}
+                        | FOR_T error ASSIGN_T iter_space DO_T statement                        {yyerrok;}
+                        | FOR_T ID_T error iter_space DO_T statement                            {yyerrok;}
+                        | FOR_T ID_T ASSIGN_T iter_space error statement                        {yyerrok;}
 
 iter_space:             expression TO_T expression
                         | expression DOWNTO_T expression
 
 with_statement:         WITH_T variable DO_T statement
+                        | error variable DO_T statement                                         {yyerrok;}
+                        | WITH_T variable error statement                                       {yyerrok;}
 
 subprogram_call:        ID_T
                         | ID_T LPAREN_T expressions RPAREN_T
@@ -314,7 +327,14 @@ int main(int argc, char* argv[]){
 }
 
 /* Error Handler */
-void yyerror(char const *s){
+void yyerror(char const *error_mess){
+
     err_counter++;
-    printf("Error: %s\n", s);
+    if(err_counter >= 5){
+        perror("Number of syntax errors reached 5. Terminating analysis !");
+        exit(-1);
+    }else{
+        printf("Error [Line: %d]: %s\n", yylineno, error_mess);
+        //yyless(1);
+    }
 }
