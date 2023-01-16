@@ -272,8 +272,6 @@ case_tail:              SEMI_T OTHERWISE_T COLON_T statement
                         | %empty {}
 
 while_statement:        WHILE_T expression DO_T statement
-                        | error expression DO_T statement                                       {yyerrok;}
-                        | WHILE_T expression error statement                                    {yyerrok;}
 
 for_statement:          FOR_T ID_T ASSIGN_T iter_space DO_T statement
                         | error ID_T ASSIGN_T iter_space DO_T statement                         {yyerrok;}
