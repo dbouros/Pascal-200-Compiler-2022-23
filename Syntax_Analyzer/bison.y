@@ -15,6 +15,7 @@
     extern char str_Arr[2048];
 
     int err_counter;
+    extern void error_Handler(int token_val, int id);
     void yyerror(char const *error_mess);
 
 %}
@@ -274,17 +275,17 @@ case_tail:              SEMI_T OTHERWISE_T COLON_T statement
 while_statement:        WHILE_T expression DO_T statement
 
 for_statement:          FOR_T ID_T ASSIGN_T iter_space DO_T statement
-                        | error ID_T ASSIGN_T iter_space DO_T statement                         {yyerrok;}
-                        | FOR_T error ASSIGN_T iter_space DO_T statement                        {yyerrok;}
-                        | FOR_T ID_T error iter_space DO_T statement                            {yyerrok;}
-                        | FOR_T ID_T ASSIGN_T iter_space error statement                        {yyerrok;}
+                        | error ID_T ASSIGN_T iter_space DO_T statement                         {yyerror("Expected keyword: 'for'"); yyerrok;}
+                        | FOR_T error ASSIGN_T iter_space DO_T statement                        {yyerror("Expected identifier"); yyerrok;}
+                        | FOR_T ID_T error iter_space DO_T statement                            {yyerror("Expected operator: ':='"); yyerrok;}
+                        | FOR_T ID_T ASSIGN_T iter_space error statement                        {yyerror("Expected keyword: 'do'"); yyerrok;}
 
 iter_space:             expression TO_T expression
                         | expression DOWNTO_T expression
 
 with_statement:         WITH_T variable DO_T statement
-                        | error variable DO_T statement                                         {yyerrok;}
-                        | WITH_T variable error statement                                       {yyerrok;}
+                        | error variable DO_T statement                                         {yyerror("Expected keyword: 'with'"); yyerrok;}
+                        | WITH_T variable error statement                                       {yyerror("Expected keyword: 'do'"); yyerrok;}
 
 subprogram_call:        ID_T
                         | ID_T LPAREN_T expressions RPAREN_T
@@ -333,6 +334,5 @@ void yyerror(char const *error_mess){
         exit(-1);
     }else{
         printf("Error [Line: %d]: %s\n", yylineno, error_mess);
-        //yyless(1);
     }
 }

@@ -353,6 +353,8 @@ void sp_chr_Handler(char *str_Arr){
 }
 
 void error_Handler(int token_val, int id){
+// id == 0   --> EOF error
+// id == -1  --> some other lexical error
 
     if(token_val == STRING_T){
         if(id == 0){
