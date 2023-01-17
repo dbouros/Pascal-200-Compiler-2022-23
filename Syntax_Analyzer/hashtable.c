@@ -16,7 +16,7 @@ typedef struct h_Table{
     h_Size size;
     struct h_Node **nodes;
     h_Size (*hashfunc)(const char *);
-    // Pointer *hashfunc == pointer to a function && has size (h_Size) and type (const char *)
+    // Pointer *hashfunc == function pointer, with size (h_Size) and type (const char *)
     
 }HASHTABLE;
 
