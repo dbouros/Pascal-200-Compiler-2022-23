@@ -5,6 +5,7 @@
     #include <unistd.h>
     #include <math.h>
     #include <string.h>
+    #include "hashtable.c"
 
     extern int yylex();
     extern void yyterminate();
@@ -15,8 +16,9 @@
     extern char str_Arr[2048];
 
     int err_counter;
-    extern void error_Handler(int token_val, int id);
     void yyerror(char const *error_mess);
+
+    extern void error_Handler(int token_val, int id);
 
 %}
 

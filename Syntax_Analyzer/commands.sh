@@ -12,8 +12,10 @@ echo "Running command $value:"
 if [ $value -eq 0 ]
 then
     echo -e "\nExecuting Flex and Bison.\n"
+    echo "flex lexer.l && bison -v -d bison.y"
     flex lexer.l && bison -v -d bison.y
     echo -e "\nCompiling C programs with gcc compiler.\n"
+    echo "gcc bison.tab.c lex.yy.c -lfl -lm"
     gcc bison.tab.c lex.yy.c -lfl -lm
     echo -e "\nExecuting a.out using argument from pointer yyin.\n"
 
@@ -27,7 +29,6 @@ then
 
     echo -e "\nProject's folder cleaned !!\n"
     echo -e "Project's folder:\n"
-    ls -la
 
 else
     echo -e "Invalid command! Please choose either 0 or 1.\n"
