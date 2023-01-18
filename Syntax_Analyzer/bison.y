@@ -318,15 +318,17 @@ int main(int argc, char* argv[]){
             return -1;
         }
     }
-    
+    // Create
     yyparse();
+    // Get last
+    // Delete all
 
     fclose(yyin);
     
     return 0;
 }
 
-/* Error Handler */
+/* Error Handler --> yyerror() */
 void yyerror(char const *error_mess){
 
     err_counter++;
