@@ -17,8 +17,9 @@
 
     int err_counter;
     void yyerror(char const *error_mess);
-
     extern void error_Handler(int token_val, int id);
+
+    int scope = 0;
 
 %}
 
