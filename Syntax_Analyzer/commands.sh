@@ -28,7 +28,6 @@ then
     rm a.out
 
     echo -e "\nProject's folder cleaned !!\n"
-    echo -e "Project's folder:\n"
 
 else
     echo -e "Invalid command! Please choose either 0 or 1.\n"
