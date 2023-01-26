@@ -8,7 +8,9 @@
 
 int main(){
 
-    printf("Hello World!\n");
+    if(ht_Create(10) == true){
+        ht_Print();
+    }
 
     return 0;
 }
