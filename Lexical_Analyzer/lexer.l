@@ -174,7 +174,7 @@ int main(int argc, char* argv[]){
 
         if (yyin == NULL){
             perror("Can't open file!\n");
-            return -1;
+            return -2;
         }
     }
     
