@@ -178,7 +178,7 @@ NEW_LINE_WINDOWS    [\r\n]
 
         if (yyin == NULL){
             perror("Can't open file!\n");
-            return -1;
+            return -2;
         }
     }
     

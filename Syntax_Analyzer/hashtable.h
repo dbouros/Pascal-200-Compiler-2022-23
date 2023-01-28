@@ -1,3 +1,4 @@
+// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.h
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -19,7 +20,6 @@ typedef struct hashtbl {
 	struct hashnode_s **nodes;
 	hash_size (*hashfunc)(const char *);
 } HASHTBL;
-
 
 HASHTBL *hashtbl_create(hash_size size, hash_size (*hashfunc)(const char *));
 void hashtbl_destroy(HASHTBL *hashtbl);

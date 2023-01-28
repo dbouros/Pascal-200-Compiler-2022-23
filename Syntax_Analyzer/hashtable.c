@@ -1,3 +1,4 @@
+// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -65,7 +66,7 @@ int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *data ,int scope)
 	struct hashnode_s *node;
 	hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
 
-    printf("HASHTBL_INSERT(): KEY = %s, HASH = %ld,  \tDATA = %s, SCOPE = %d\n", key, hash, (char*)data, scope);
+        printf("HASHTBL_INSERT(): KEY = %s, HASH = %ld,  \tDATA = %s, SCOPE = %d\n", key, hash, (char*)data, scope);
 
 	node=hashtbl->nodes[hash];
 	while(node) {
@@ -122,16 +123,16 @@ void *hashtbl_get(HASHTBL *hashtbl, int scope)
 		node=hashtbl->nodes[n];
 		while(node) {
 			if(node->scope == scope) {
-                    //if(HASHTBL_SHOW_GET_AS_TABLE){
+                    if(true){
                         if(!found){
                             printf("-------------- Scope %-2d ---------------\n", scope);
                             printf("Name------------------ Value-----------\n");
                             found++;
                         }
-                        //printf("%-22s %-16s\n", node->key, (char*)node->data);
-                    //}else{
+                        printf("%-22s %-16s\n", node->key, (char*)node->data);
+                    }else{
                         printf("HASHTBL_GET():\tSCOPE = %d, KEY = %s,  \tDATA = %s\n", node->scope, node->key, (char*)node->data);
-                    //}
+                    }
 				oldnode = node;
 				node=node->next;
 				rem = hashtbl_remove(hashtbl, oldnode->key, scope);
@@ -143,7 +144,7 @@ void *hashtbl_get(HASHTBL *hashtbl, int scope)
     if(found){
         printf("---------- End of Scope %-2d ------------\n\n", scope);
     }
-	if (rem == -1 )
+	if (rem == -1)
 		printf("HASHTBL_GET():\tThere are no elements in the hash table with this scope!\n\t\tSCOPE = %d\n", scope);
 	
 	return NULL;
