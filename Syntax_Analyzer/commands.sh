@@ -15,7 +15,7 @@ then
     echo "flex lexer.l && bison -v -d bison.y"
     flex lexer.l && bison -v -d bison.y
     echo -e "\nCompiling C programs with gcc compiler.\n"
-    echo "gcc bison.tab.c lex.yy.c -lfl -lm"
+    echo -e "gcc bison.tab.c lex.yy.c -lfl -lm \n"
     gcc bison.tab.c lex.yy.c -lfl -lm
     #echo -e "\nExecuting a.out using argument from pointer yyin.\n"
     #./a.out ../pasc200tests/test1.p

@@ -17,6 +17,7 @@
 
     int err_counter;
     void yyerror(char const *error_mess);
+    //extern yyless(int num);
     //extern void error_Handler(int token_val, int id);
 
     HASHTBL *hashtbl;
@@ -345,6 +346,6 @@ void yyerror(char const *error_mess){
         exit(-1);
     }else{
         printf("Error [Line: %d]: %s\n", yylineno, error_mess);
-        //error_Handler(...);
+        // yyless(1); || error_Handler(...);
     }
 }
