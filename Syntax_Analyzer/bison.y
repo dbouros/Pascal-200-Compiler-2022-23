@@ -1,3 +1,5 @@
+// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.h
+// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.c
 %{
     #include <stdio.h>
     #include <stdlib.h>
@@ -5,7 +7,6 @@
     #include <unistd.h>
     #include <math.h>
     #include <string.h>
-    #include "hashtable.c"
 
     extern int yylex();
     extern void yyterminate();
@@ -15,13 +16,33 @@
 
     extern char str_Arr[2048];
 
-    int err_counter;
-    void yyerror(char const *error_mess);
+    typedef size_t hash_size;
+
+    struct hashnode_s {
+        char *key;
+        void *data;
+        int scope;
+        struct hashnode_s *next;
+    };
+
+    typedef struct hashtbl {
+        hash_size size;
+        struct hashnode_s **nodes;
+        hash_size (*hashfunc)(const char *);
+    } HASHTBL;
+
+    HASHTBL *hashtbl_create(hash_size size, hash_size (*hashfunc)(const char *));
+    void hashtbl_destroy(HASHTBL *hashtbl);
+    int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *data, int scope);
+    int hashtbl_remove(HASHTBL *hashtbl, const char *key,int scope);
+    void *hashtbl_get(HASHTBL *hashtbl, int scope);
+
+    int pr_scope=0;
+    HASHTBL *hashtable;
+
+    extern void yyerror(char const *error_mess);
     //extern yyless(int num);
     //extern void error_Handler(int token_val, int id);
-
-    HASHTBL *hashtbl;
-    int scope = 0;
 
 %}
 
@@ -104,14 +125,14 @@
 
 %token      EOF_T      0   "end of file"
 
-
+/*
 %type <str_var> program declarations constdefs constant_defs expression variable expressions constant setlistexpression
 %type <str_var> typedefs type_defs type_def dims limits limit sign typename standard_type fields field identifiers vardefs
 %type <str_var> variable_defs subprograms subprogram sub_header formal_parameters parameter_list pass comp_statement
 %type <str_var> statements statement assignment if_statement if_tail case_statement cases single_case label_list label
 %type <str_var> case_tail while_statement for_statement iter_space with_statement subprogram_call io_statement read_list
 %type <str_var> read_item write_list write_item
-
+*/
 
 %nonassoc EQU_T INOP_T RELOP_T
 %left ADDOP_T  OROP_T
@@ -122,18 +143,20 @@
 %nonassoc ELSE
 %nonassoc ELSE_T
 
+%start program
+
 %%
-program:                header declarations subprograms comp_statement DOT_T
+program:                header declarations subprograms comp_statement DOT_T                    
                         ;
-header:                 PROGRAM_T ID_T SEMI_T
+header:                 PROGRAM_T ID_T SEMI_T                                                   {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
                         ;
 declarations:           constdefs typedefs vardefs
                         ;
 constdefs:              CONST_T constant_defs SEMI_T
                         | %empty                                                                { }
                         ;
-constant_defs:          constant_defs SEMI_T ID_T EQU_T expression
-                        | ID_T EQU_T expression
+constant_defs:          constant_defs SEMI_T ID_T EQU_T expression                              {hashtbl_insert(hashtable, $3, NULL, pr_scope);}
+                        | ID_T EQU_T expression                                                 {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 expression:             expression RELOP_T expression
                         | expression EQU_T expression
@@ -144,7 +167,7 @@ expression:             expression RELOP_T expression
                         | ADDOP_T expression
                         | NOTOP_T expression
                         | variable
-                        | ID_T LPAREN_T expressions RPAREN_T
+                        | ID_T LPAREN_T expressions RPAREN_T                                    {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         | LENGTH_T LPAREN_T expression RPAREN_T
                         | NEW_T LPAREN_T expression RPAREN_T
                         | constant
@@ -313,12 +336,12 @@ write_item:             expression
 /* FUNCTIONS */
 /*  Main */
 int main(int argc, char* argv[]){
-
-    if(!(hashtbl = hashtbl_create(10, NULL))) {
-        perror("ERROR: Creation of hashtable failed!\n");
-        exit(-3);
-    }
     
+    if(!(hashtable = hashtbl_create(10, NULL))) {
+        fprintf(stderr, "ERROR: hashtbl_create() failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
     if (argc > 1){
         yyin = fopen(argv[1], "r");
 
@@ -327,25 +350,168 @@ int main(int argc, char* argv[]){
             return -2;
         }
     }
-    
+
     yyparse();
-
-    // Get last
-    // Delete all
-
+    
+    hashtbl_get(hashtable, pr_scope);
+    hashtbl_destroy(hashtable);
     fclose(yyin);
     
     return 0;
 }
 
-void yyerror(char const *error_mess){
+//void yyerror(char const *error_mess){
+//
+//    err_counter++;
+//    if(err_counter >= 5){
+//        perror("Number of syntax errors reached 5. Terminating analysis !");
+//        exit(-1);
+//    }else{
+//        printf("Error [Line: %d]: %s\n", yylineno, error_mess);
+//        yyless(1);
+//    }
+//}
+// #----------------------------------------------------------------------------
 
-    err_counter++;
-    if(err_counter >= 5){
-        perror("Number of syntax errors reached 5. Terminating analysis !");
-        exit(-1);
-    }else{
-        printf("Error [Line: %d]: %s\n", yylineno, error_mess);
-        // yyless(1); || error_Handler(...);
+static char *mystrdup(const char *s)
+{
+	char *b;
+	if(!(b=malloc(strlen(s)+1))) return NULL;
+	strcpy(b, s);
+	return b;
+}
+
+static hash_size def_hashfunc(const char *key)
+{
+	hash_size hash=0;
+	
+	while(*key) hash+=(unsigned char)*key++;
+
+	return hash;
+}
+
+HASHTBL *hashtbl_create(hash_size size, hash_size (*hashfunc)(const char *))
+{
+	HASHTBL *hashtbl;
+
+	if(!(hashtbl=malloc(sizeof(HASHTBL)))) return NULL;
+
+	if(!(hashtbl->nodes=calloc(size, sizeof(struct hashnode_s*)))) {
+		free(hashtbl);
+		return NULL;
+	}
+
+	hashtbl->size=size;
+
+	if(hashfunc) hashtbl->hashfunc=hashfunc;
+	else hashtbl->hashfunc=def_hashfunc;
+
+	return hashtbl;
+}
+
+void hashtbl_destroy(HASHTBL *hashtbl)
+{
+	hash_size n;
+	struct hashnode_s *node, *oldnode;
+	
+	for(n=0; n<hashtbl->size; ++n) {
+		node=hashtbl->nodes[n];
+		while(node) {
+			free(node->key);
+			oldnode=node;
+			node=node->next;
+			free(oldnode);
+		}
+	}
+	free(hashtbl->nodes);
+	free(hashtbl);
+}
+
+int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *data ,int scope)
+{
+	struct hashnode_s *node;
+	hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
+
+        printf("HASHTBL_INSERT(): KEY = %s, HASH = %ld,  \tDATA = %s, SCOPE = %d\n", key, hash, (char*)data, scope);
+
+	node=hashtbl->nodes[hash];
+	while(node) {
+		if(!strcmp(node->key, key) && (node->scope == scope)) {
+			node->data=data;
+			return 0;
+		}
+		node=node->next;
+	}
+
+	if(!(node=malloc(sizeof(struct hashnode_s)))) return -1;
+	if(!(node->key=mystrdup(key))) {
+		free(node);
+		return -1;
+	}
+	node->data=data;
+	node->scope = scope;
+	node->next=hashtbl->nodes[hash];
+	hashtbl->nodes[hash]=node;
+
+	return 0;
+}
+
+int hashtbl_remove(HASHTBL *hashtbl, const char *key,int scope)
+{
+	struct hashnode_s *node, *prevnode=NULL;
+	hash_size hash=hashtbl->hashfunc(key)%hashtbl->size;
+
+	node=hashtbl->nodes[hash];
+	while(node) {
+		if((!strcmp(node->key, key)) && (node->scope == scope)) {
+			free(node->key);
+			if(prevnode) prevnode->next=node->next;
+			else hashtbl->nodes[hash]=node->next;
+			free(node);
+			return 0;
+		}
+		prevnode=node;
+		node=node->next;
+	}
+
+	return -1;
+}
+
+void *hashtbl_get(HASHTBL *hashtbl, int scope)
+{
+	int rem;
+	hash_size n;
+	struct hashnode_s *node, *oldnode;
+		
+    int found = 0;
+        
+	for(n=0; n<hashtbl->size; ++n) {
+		node=hashtbl->nodes[n];
+		while(node) {
+			if(node->scope == scope) {
+                    if(true){
+                        if(!found){
+                            printf("-------------- Scope %-2d ---------------\n", scope);
+                            printf("Name------------------ Value-----------\n");
+                            found++;
+                        }
+                        printf("%-22s %-16s\n", node->key, (char*)node->data);
+                    }else{
+                        printf("HASHTBL_GET():\tSCOPE = %d, KEY = %s,  \tDATA = %s\n", node->scope, node->key, (char*)node->data);
+                    }
+				oldnode = node;
+				node=node->next;
+				rem = hashtbl_remove(hashtbl, oldnode->key, scope);
+			}else
+				node=node->next;
+		}
+	}
+	
+    if(found){
+        printf("---------- End of Scope %-2d ------------\n\n", scope);
     }
+	if (rem == -1)
+		printf("HASHTBL_GET():\tThere are no elements in the hash table with this scope!\n\t\tSCOPE = %d\n", scope);
+	
+	return NULL;
 }

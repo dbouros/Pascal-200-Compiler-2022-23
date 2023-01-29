@@ -17,8 +17,8 @@ then
     echo -e "\nCompiling C programs with gcc compiler.\n"
     echo -e "gcc bison.tab.c lex.yy.c -lfl -lm \n"
     gcc bison.tab.c lex.yy.c -lfl -lm
-    #echo -e "\nExecuting a.out using argument from pointer yyin.\n"
-    #./a.out ../pasc200tests/test1.p
+    echo -e "\nExecuting a.out using argument from pointer yyin.\n"
+    ./a.out ../pasc200tests/test1.p
 
 elif [ $value -eq 1 ]
 then

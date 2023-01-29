@@ -1,4 +1,4 @@
-// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
