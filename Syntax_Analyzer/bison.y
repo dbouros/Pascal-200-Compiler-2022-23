@@ -174,8 +174,8 @@ expression:             expression RELOP_T expression
                         | LPAREN_T expression RPAREN_T
                         | setlistexpression
                         ;
-variable:               ID_T
-                        | variable DOT_T ID_T
+variable:               ID_T                                                                    {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
+                        | variable DOT_T ID_T                                                   {hashtbl_insert(hashtable, $3, NULL, pr_scope);}
                         | variable LBRACK_T expressions RBRACK_T
                         | LISTFUNC_T LPAREN_T expression RPAREN_T
                         ;
@@ -190,11 +190,12 @@ constant:               ICONST_T
 setlistexpression:      LBRACK_T expressions RBRACK_T
                         | LBRACK_T RBRACK_T
                         ;
-typedefs:               TYPE_T type_defs SEMI_T
+typedefs:               TYPE_T                                                                  {pr_scope++;}
+                            type_defs SEMI_T                                                    {hashtbl_get(hashtable, pr_scope); pr_scope--;}
                         | %empty                                                                { }
                         ;
-type_defs:              type_defs SEMI_T ID_T EQU_T type_def
-                        | ID_T EQU_T type_def
+type_defs:              type_defs SEMI_T ID_T EQU_T type_def                                    {hashtbl_insert(hashtable, $3, NULL, pr_scope);}
+                        | ID_T EQU_T type_def                                                   {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 type_def:               ARRAY_T LBRACK_T dims RBRACK_T OF_T typename
                         | LIST_T OF_T typename
@@ -206,18 +207,18 @@ dims:                   dims COMMA_T limits
                         | limits
                         ;
 limits:                 limit DOTDOT_T limit
-                        | ID_T
+                        | ID_T                                                                  {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 limit:                  sign ICONST_T
                         | CCONST_T
                         | BCONST_T
-                        | ADDOP_T ID_T
-                        | ID_T
+                        | ADDOP_T ID_T                                                          {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
+                        | ID_T                                                                  {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 sign:                   ADDOP_T | %empty                                                        { }
                         ;
 typename:               standard_type
-                        | ID_T
+                        | ID_T                                                                  {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 standard_type:          INTEGER_T 
                         | REAL_T 
@@ -229,8 +230,8 @@ fields:                 fields SEMI_T field
                         ;
 field:                  identifiers COLON_T typename
                         ;
-identifiers:            identifiers COMMA_T ID_T
-                        | ID_T
+identifiers:            identifiers COMMA_T ID_T                                                {hashtbl_insert(hashtable, $3, NULL, pr_scope);}
+                        | ID_T                                                                  {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 vardefs:                VAR_T variable_defs SEMI_T
                         | %empty                                                                { }
@@ -244,10 +245,10 @@ subprograms:            subprograms subprogram SEMI_T
 subprogram:             sub_header SEMI_T FORWARD_T
                         | sub_header SEMI_T declarations subprograms comp_statement
                         ;
-sub_header:             FUNCTION_T ID_T formal_parameters COLON_T standard_type
-                        | FUNCTION_T ID_T formal_parameters COLON_T LIST_T
-                        | PROCEDURE_T ID_T formal_parameters
-                        | FUNCTION_T ID_T
+sub_header:             FUNCTION_T ID_T formal_parameters COLON_T standard_type                 {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
+                        | FUNCTION_T ID_T formal_parameters COLON_T LIST_T                      {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
+                        | PROCEDURE_T ID_T formal_parameters                                    {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
+                        | FUNCTION_T ID_T                                                       {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
                         ;
 formal_parameters:      LPAREN_T parameter_list RPAREN_T
                         | %empty                                                                { }
@@ -258,7 +259,8 @@ parameter_list:         parameter_list SEMI_T pass identifiers COLON_T typename
 pass:                   VAR_T 
                         | %empty                                                                { }
                         ;
-comp_statement:         BEGIN_T statements END_T
+comp_statement:         BEGIN_T                                                                 {pr_scope++;}
+                            statements END_T                                                    {hashtbl_get(hashtable, pr_scope); pr_scope--;}
                         ;
 statements:             statements SEMI_T statement
                         | statement
@@ -277,12 +279,17 @@ statement:              assignment
 assignment:             variable ASSIGN_T expression
                         | variable ASSIGN_T STRING_T
                         ;
-if_statement:           IF_T expression THEN_T statement if_tail
+if_statement:           IF_T expression THEN_T                                                  {pr_scope++;}
+                            statement                                                           {hashtbl_get(hashtable, pr_scope); pr_scope--;}
+                            if_tail                                 
                         ;
-if_tail:                ELSE_T statement
+if_tail:                ELSE_T                                                                  {pr_scope++;}
+                            statement                                                           {hashtbl_get(hashtable, pr_scope); pr_scope--;}
                         | %empty %prec ELSE
                         ;
-case_statement:         CASE_T expression OF_T cases case_tail END_T
+case_statement:         CASE_T                                                                  {pr_scope++;}
+                            expression OF_T cases                                               {hashtbl_get(hashtable, pr_scope); pr_scope--;}
+                        case_tail END_T
                         ;
 cases:                  cases SEMI_T single_case
                         | single_case
@@ -294,14 +301,17 @@ label_list:             label_list COMMA_T label
                         | label
                         ;
 label:                  sign constant
-                        | sign ID_T
+                        | sign ID_T                                                             {hashtbl_insert(hashtable, $2, NULL, pr_scope);}
                         ;
-case_tail:              SEMI_T OTHERWISE_T COLON_T statement
+case_tail:              SEMI_T OTHERWISE_T COLON_T                                              {pr_scope++;}
+                            statement                                                           {hashtbl_get(hashtable, pr_scope); pr_scope--;}
                         | %empty                                                                { }
                         ;
-while_statement:        WHILE_T expression DO_T statement
+while_statement:        WHILE_T expression DO_T                                                 {pr_scope++;}
+                             statement                                                          {hashtbl_get(hashtable, pr_scope); pr_scope--;}
                         ;
-for_statement:          FOR_T ID_T ASSIGN_T iter_space DO_T statement
+for_statement:          FOR_T ID_T ASSIGN_T iter_space DO_T                                     {hashtbl_insert(hashtable, $2, NULL, pr_scope); pr_scope++;}
+                            statement                                                           {hashtbl_get(hashtable, pr_scope); pr_scope--;}
                         | error ID_T ASSIGN_T iter_space DO_T statement                         {yyerror("Expected keyword: 'for'"); yyerrok;}
                         | FOR_T error ASSIGN_T iter_space DO_T statement                        {yyerror("Expected identifier"); yyerrok;}
                         | FOR_T ID_T error iter_space DO_T statement                            {yyerror("Expected operator: ':='"); yyerrok;}
@@ -314,8 +324,8 @@ with_statement:         WITH_T variable DO_T statement
                         | error variable DO_T statement                                         {yyerror("Expected keyword: 'with'"); yyerrok;}
                         | WITH_T variable error statement                                       {yyerror("Expected keyword: 'do'"); yyerrok;}
                         ;
-subprogram_call:        ID_T
-                        | ID_T LPAREN_T expressions RPAREN_T
+subprogram_call:        ID_T                                                                    {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
+                        | ID_T LPAREN_T expressions RPAREN_T                                    {hashtbl_insert(hashtable, $1, NULL, pr_scope);}
                         ;
 io_statement:           READ_T LPAREN_T read_list RPAREN_T
                         | WRITE_T LPAREN_T write_list RPAREN_T
@@ -336,11 +346,6 @@ write_item:             expression
 /* FUNCTIONS */
 /*  Main */
 int main(int argc, char* argv[]){
-    
-    if(!(hashtable = hashtbl_create(10, NULL))) {
-        fprintf(stderr, "ERROR: hashtbl_create() failed!\n");
-        exit(EXIT_FAILURE);
-    }
 
     if (argc > 1){
         yyin = fopen(argv[1], "r");
@@ -349,6 +354,11 @@ int main(int argc, char* argv[]){
             perror("Can't open file!\n");
             return -2;
         }
+    }
+        
+    if(!(hashtable = hashtbl_create(10, NULL))) {
+        fprintf(stderr, "ERROR: hashtbl_create() failed!\n");
+        exit(EXIT_FAILURE);
     }
 
     yyparse();

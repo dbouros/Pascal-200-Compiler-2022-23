@@ -357,7 +357,7 @@ void yyerror(char const *error_mess){
 
     err_counter++;
     if(err_counter >= 5){
-        perror("Number of syntax errors reached 5. Terminating analysis !");
+        perror("Number of syntax errors is above or equal to 5. Aborting syntax analysis !");
         exit(-1);
     }else{
         printf("Error [Line: %d]: %s\n", yylineno, error_mess);
