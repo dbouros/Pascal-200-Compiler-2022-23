@@ -143,7 +143,7 @@
 */
 
 
-/* State: 78, 192 (Precedence)	6 Conflicts */
+/* State: 78, 192 (Precedence)	6 Conflicts (Solved) */
 /* pasc200.pdf */
 /* https://montcs.bloomu.edu/Information/operator-precedence.C-Python-Pascal.html */
 %nonassoc EQU_T INOP_T RELOP_T
@@ -152,13 +152,13 @@
 %nonassoc NOTOP_T
 %left LPAREN_T RPAREN_T DOT_T LBRACK_T RBRACK_T
 
-/* State: 204     (If-else)	1 Conflicts */
+/* State: 204     (If-else)	1 Conflicts (Solved) */
 %nonassoc ELSE
 %nonassoc ELSE_T
 
 %start program
 
-/* State 244      (case-tail) 1 Conflicts */
+/* State 244      (case-tail) 1 Conflicts (Unsolved) */
 %%
 program:                header declarations subprograms comp_statement DOT_T                    
                         ;

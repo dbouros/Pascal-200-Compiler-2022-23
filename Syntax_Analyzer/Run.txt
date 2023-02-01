@@ -7,9 +7,11 @@ chmod 777 commands.sh
 0 = Run flex and bison along with the outputs.
 1 = Delete all output files after the run process (Must run 0 first).
 
-(Σημείωση 2) : 
+(Σημείωση 2) :
+(Solved) 
 State: 78, 192 (Precedence)	6 Conflicts
 State: 204     (If-else)	1 Conflicts
+(Unsolved)
 State: 244	(case-tail)	1 Confilcts
 
 (Σημείωση 3) :
