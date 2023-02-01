@@ -54,11 +54,7 @@
 
 %}
 
-
-%error-verbose
-// Might need this for Windows instead
-// %define parse.error verbose
-
+%define parse.error verbose
 
 %union{
     int int_var;
@@ -162,6 +158,7 @@
 
 %start program
 
+/* State 244      (case-tail) 1 Conflicts */
 %%
 program:                header declarations subprograms comp_statement DOT_T                    
                         ;
@@ -387,19 +384,7 @@ int main(int argc, char* argv[]){
     return 0;
 }
 
-//void yyerror(char const *error_mess){
-//
-//    err_counter++;
-//    if(err_counter >= 5){
-//        perror("Number of syntax errors reached 5. Terminating analysis !");
-//        exit(-1);
-//    }else{
-//        printf("Error [Line: %d]: %s\n", yylineno, error_mess);
-//        yyless(1);
-//    }
-//}
-// #----------------------------------------------------------------------------
-
+ // Hashtable code
 static char *mystrdup(const char *s)
 {
 	char *b;
