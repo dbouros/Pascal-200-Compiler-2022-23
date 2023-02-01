@@ -1,0 +1,15 @@
+Executing syntax analyzer in Ubuntu 18.04
+
+chmod 777 commands.sh
+./commands.sh
+
+(Σημείωση 1) :
+0 = Run flex and bison along with the outputs.
+1 = Delete all output files after the run process (Must run 0 first).
+
+(Σημείωση 2) : 
+State: 78, 192 (Precedence)	6 Conflicts
+State: 204     (If-else)	1 Conflicts
+
+(Σημείωση 3) :
+Η εργασία του μεταγλωττιστή έχει υλοποιηθεί σε Ubuntu 18.04 και η λειτουργηκότητά του έχει ελεγχθεί εκεί.

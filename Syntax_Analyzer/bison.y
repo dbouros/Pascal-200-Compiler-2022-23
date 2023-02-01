@@ -1,6 +1,8 @@
-// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.h
-// https://github.com/WckdAwe/C-600-Compiler/blob/master/2.%20Syntax%20Analysis/hashtbl.c
+ // Dimitris Bouros	        2116085
+ // Antwnis  Mourtzakis	    2119074
+
 %{
+    // Includes
     #include <stdio.h>
     #include <stdlib.h>
     #include <stdbool.h>
@@ -8,6 +10,7 @@
     #include <math.h>
     #include <string.h>
 
+    // Externs from Flex
     extern int yylex();
     extern void yyterminate();
     extern FILE *yyin;
@@ -16,6 +19,8 @@
 
     extern char str_Arr[2048];
 
+    // Declarations for hashtable
+    // Start
     typedef size_t hash_size;
 
     struct hashnode_s {
@@ -36,17 +41,24 @@
     int hashtbl_insert(HASHTBL *hashtbl, const char *key, void *data, int scope);
     int hashtbl_remove(HASHTBL *hashtbl, const char *key,int scope);
     void *hashtbl_get(HASHTBL *hashtbl, int scope);
+    // End
 
+    // Initialize scope and hashtable variables
     int pr_scope=0;
     HASHTBL *hashtable;
 
+    // https://stackoverflow.com/questions/17127481/undefined-reference-to-yyerror-when-compiling-with-flex-and-bison
     extern void yyerror(char const *error_mess);
     //extern yyless(int num);
     //extern void error_Handler(int token_val, int id);
 
 %}
 
+
 %error-verbose
+// Might need this for Windows instead
+// %define parse.error verbose
+
 
 %union{
     int int_var;
@@ -134,12 +146,17 @@
 %type <str_var> read_item write_list write_item
 */
 
+
+/* State: 78, 192 (Precedence)	6 Conflicts */
+/* pasc200.pdf */
+/* https://montcs.bloomu.edu/Information/operator-precedence.C-Python-Pascal.html */
 %nonassoc EQU_T INOP_T RELOP_T
 %left ADDOP_T  OROP_T
 %left MULDIVANDOP_T
 %nonassoc NOTOP_T
 %left LPAREN_T RPAREN_T DOT_T LBRACK_T RBRACK_T
 
+/* State: 204     (If-else)	1 Conflicts */
 %nonassoc ELSE
 %nonassoc ELSE_T
 

@@ -1,11 +1,5 @@
-/* TODO List: */
-/*       1) Fix -lm flag bug when able and try to change ICONST and RCONST RegEx position. */
-/*       2) Define simple regex with words (Position before rules). */
-/*       3) After Keywords (PROGRAM-WRITE) --> Regex () */
-/*       4) Create function for str_int(char *str) -> (int) conversion for requested number base(2, 10, 16). */
-/*       5) After step 4, update token_Print() to return num token of any base(2, 10, 16) to base "10". */
-/*       6) If steps 4,5 are correct, create function(s) to convert same string to (real) type. */
-/*       7) Create SubLexer within Rules(with RegEx) to catch Strings and Comments. */
+/* Dimitris Bouros	        2116085 */
+/* Antwnis  Mourtzakis	    2119074 */
 
 /* DEFINES */
 %{
@@ -38,7 +32,8 @@
 %x SBLXR_STRING
 %x SBLXR_COMMENT
 
-/* Helpful Defines. */
+/* Helpful Classes */
+
 LETTER              [a-zA-Z]
 ALPHANUM            [a-zA-Z0-9]
 ALPHANUM_           [a-zA-Z0-9_]

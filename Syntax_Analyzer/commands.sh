@@ -1,3 +1,6 @@
+# Dimitris Bouros	    2116085
+# Antwnis  Mourtzakis	2119074
+
 #!/bin/bash
 
 echo -e "Please give a command.\n"
