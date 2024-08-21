@@ -3,6 +3,3 @@ Executing lexical analyzer(lexer.l) in Ubuntu 18.04
 flex lexer.l
 gcc lex.yy.c -lfl -lm
 ./a.out ../pasc200tests/test1.p
-
-
-(Σημείωση) : Η εργασία του μεταγλωττιστή έχει υλοποιηθεί σε Ubuntu 18.04 και η λειτουργηκότητά του έχει ελεγχθεί εκεί.

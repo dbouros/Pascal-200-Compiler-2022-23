@@ -1,0 +1,19 @@
+The Transition Diagram is the "TD.jff" file and was created with the JFLAP7.1.jar tool
+
+To open JFLAP7.1.jar and TD.jff do the following:
+
+For Ubuntu:
+  We run in the file folder in the terminal:
+  1) sudo apt install default-jre
+  2) java -jar JFLAP7.1.jar
+  Then:
+  3) We choose Finite Automaton
+  4) Choose File --> Open...
+  5) Locate the TD.jff file and open it in JFLAP
+
+For Windows:
+  In the files folder
+  1) Double click JFLAP7.1.jar
+  2) We choose Finite Automaton
+  3) Choose File --> Open...
+  4) Locate the TD.jff file and open it in JFLAP
